@@ -1,0 +1,11 @@
+<ion-view title="Score" id="score" class=" ">
+    <ion-content padding="true" class="has-header">
+        <h2 id="page-heading1" style="color:#000000;font-weight:300;text-align:center;" class=" ">Puntuacion</h2>
+        <ion-list id="page-list1" class=" " ng-controller="scoreCtrl">
+            <ion-item class="item-avatar  " id="page-list-item6" ng-repeat="score in scores">
+                <h2>{{score.score}}</h2>
+                <p>{{score.username}}</p>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>
