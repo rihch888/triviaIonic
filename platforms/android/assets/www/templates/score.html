@@ -1,11 +1,22 @@
-<ion-view title="Score" id="score" class=" ">
-    <ion-content padding="true" class="has-header">
-        <h2 id="page-heading1" style="color:#000000;font-weight:300;text-align:center;" class=" ">Puntuacion</h2>
-        <ion-list id="page-list1" class=" " ng-controller="scoreCtrl">
-            <ion-item class="item-avatar  " id="page-list-item6" ng-repeat="score in scores">
-                <h2>{{score.score}}</h2>
-                <p>{{score.username}}</p>
-            </ion-item>
-        </ion-list>
-    </ion-content>
+<ion-view title="Puntuaciones" id="puntuaciones" ng-controller="scoreCtrl" >
+  <ion-content padding="false" scroll="false" >
+  <style>
+  .top-container{
+    height: 100%; 
+    overflow:scroll;
+}
+
+
+  </style>
+    <div class="top-container" scroll-glue>
+
+      <ion-list >
+        <ion-item class="item-avatar" id="page-list-item1" ng-repeat="score in scores" >
+          <img src="img/user2.png">
+          <h2>{{score.name}}</h2>
+          <p>{{score.score}}</p>
+        </ion-item>
+      </ion-list>
+    </div>
+  </ion-content>
 </ion-view>

@@ -1,10 +1,10 @@
 angular.module('app.services', [])
 
 .factory("Auth", function( $firebaseAuth ) {
+	return $firebaseAuth();
+})
 
-
-	//var user = $firebaseAuth;
-	var user = "ejemplo";
-      return user;
-
-});
+.factory("Data", function( $firebaseArray ) {
+	var ref = firebase.database().ref();
+  	return ref;
+})

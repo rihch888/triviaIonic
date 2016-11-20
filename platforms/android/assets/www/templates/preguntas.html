@@ -1,32 +1,43 @@
-<ion-view title="Preguntas" id="preguntas" style="background-color:#FFAD1F;">
+<ion-view title="Preguntas" id="preguntas" style="background-color:rgba(239, 71, 58, 0.8);" ng-controller="preguntasCtrl">
   <ion-content padding="true" class="has-header">
-  <div ng-controller="preguntasCtrl">
-    <div id="page-markdown7" style="text-align:right;">
-      <p style="color:#FFF8F8;">Tiempo restante: {{counter}}</p>
-    </div>
-    <div id="page-markdown9" style="text-align:right;">
-      <p style="color:#FFFFFF;">Oportunidades: 5</p>
-    </div>
-    <div id="page-markdown6" style="text-align:right;">
-      <p style="color:#FFFFFF;">Puntos: 1</p>
-    </div>
-    <div id="page-markdown3" style="text-align:center;">
-      <p style="color:#F6F3F3;" ng-bind="preguntas.cat"></p>
+  <div >
+    
+    
+    <div class="card">
+      <div class="item item-divider" style="text-align:center;">
+      <div class="row">
+      <div class="col col-33"><p ></p></div>
+      <div class="col col-33">{{data.categoria}}</div>
+      <div class="col col-33" style="text-align:right;"><p style=""></p></div>
+      </div>
+        
+      </div>
+      <div class="item item-text-wrap" style="text-align:center;">
+        {{data.pregunta}}
+      </div>
+      
+      <center><img width="60%" ng-src="{{data.archivo}}" > </center>
+      
+      <div class="item item-divider">
+        <div class="row">
+      <div class="col col-33">Oportunidades: 5<p ></p></div>
+      <div class="col col-33"></div>
+      <div class="col col-33" style="text-align:right;">Puntos: {{data.score}}<p style=""></p></div>
+      </div>
+      </div> 
+    </div> 
+    <!--<div id="page-markdown3" style="text-align:center;">
+      <p style="color:#F6F3F3;" ng-bind="data.categoria"></p>
     </div>
     <div id="page-markdown5" style="text-align:center;">
-      <p style="color:#FFFFFF;" ng-bind="preguntas.pregunta"></p>
-    </div>
-    <button id="page-button4" class="button button-stable  button-block" ng-click="btn1()" ng-bind="preguntas.res1"></button>
-    <button id="page-button5" class="button button-stable  button-block" ng-click="btn2()" ng-bind="preguntas.res2"></button>
-    <button id="page-button6" class="button button-stable  button-block" ng-click="btn3()" ng-bind="preguntas.res3"></button>
-    <button id="page-button7" class="button button-assertive">Salir</button>
+      <p style="color:#FFFFFF;" ng-bind="data.pregunta"></p>
+    </div> -->
+    
+    <!--<center><img width="170"  ng-src="{{data.archivo}}"></center> -->
+    <button id="page-button4" class="button button-stable  button-block" ng-click="btn1()" ng-bind="data.res1"></button>
+    <button id="page-button5" class="button button-stable  button-block" ng-click="btn2()" ng-bind="data.res2"></button>
+    <button id="page-button6" class="button button-stable  button-block" ng-click="btn3()" ng-bind="data.res3"></button>
+    <button id="page-button7" class="button button-assertive" ng-click="salir()">Salir</button>
     </div>
   </ion-content>
 </ion-view> 
-
-
-
-        
-
-    </ion-content>
-</ion-view>

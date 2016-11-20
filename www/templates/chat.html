@@ -1,8 +1,8 @@
-<ion-view title="Chat" id="chat" ng-controller="chatCtrl" >
-  <ion-content padding="false" scroll="false" class="has-header">
+<ion-view title="Chat" id="chat" >
+  <ion-content padding="false" scroll="false" >
   <style>
   .top-container{
-    height: calc(100% - 110px); 
+    height: calc(100% - 96px); 
     overflow:scroll;
 }
 
@@ -11,17 +11,17 @@
     bottom:0px;
     display:block;
     width:100%;
-    background-color:white;
-    button{
-        margin: 0px !important;
-    }
-    
+    background-color:white;   
+}
+.bottom-form button{
+  margin: 0px !important;
 }
   </style>
     <div class="top-container" scroll-glue>
 
       <ion-list >
         <ion-item class="item-avatar" id="page-list-item1" ng-repeat="message in messages" >
+        <img src="img/user2.png">
           <h2>{{message.name}}</h2>
           <p>{{message.text}}</p>
         </ion-item>

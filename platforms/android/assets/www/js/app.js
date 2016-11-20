@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services', 'app.directives'])
+angular.module('app', ['ionic', 'firebase', 'luegg.directives', 'app.controllers', 'app.routes', 'app.services', 'app.directives', 'ngCordova'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -19,7 +19,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services',
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
-    //Parse.initialize("IBEd9JQGfKtJHTCPzXddQsVT6aQUn8Q0LOe8wR5i", "k19lhj01p1vaj8IKIOWFiscDj2pWi4RP6aVNGAE8");
-    CB.CloudApp.init('mmwedpopjmns', 'e3c58d97-0514-45ff-8d46-a14fda0edb10');
+
   });
 })
+

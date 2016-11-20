@@ -1,0 +1,74 @@
+<style type="text/css">
+  progress[value] {
+  /* Reset the default appearance */
+  -webkit-appearance: none;
+   appearance: none;
+
+  
+  height: 20px;
+}
+
+progress[value]::-webkit-progress-bar {
+  background-color: #eee;
+  border-radius: 2px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+}
+  
+  progress[value]::-webkit-progress-value {
+  background-image:
+     -webkit-linear-gradient(-45deg, 
+                             transparent 33%, rgba(0, 0, 0, .1) 33%, 
+                             rgba(0,0, 0, .1) 66%, transparent 66%),
+     -webkit-linear-gradient(top, 
+                             rgba(255, 255, 255, .25), 
+                             rgba(0, 0, 0, .25)),
+     -webkit-linear-gradient(left, #00ff11, #00ff11);
+
+    border-radius: 2px; 
+    background-size: 35px 20px, 100% 100%, 100% 100%;
+}
+
+</style>
+<ion-view title="Preguntas" id="preguntas" style="background-color:rgba(239, 71, 58, 0.8);" >
+  <ion-content padding="true" class="has-header">
+  <div >
+    
+    <progress id="" max="100" value="{{ counter }}"> </progress>
+    <div class="card" id="card">
+      <div class="item item-divider" style="text-align:center;">
+      <div class="row">
+      <div class="col col-33"><p ></p></div>
+      <div class="col col-33">{{data.categoria}}</div>
+      <div class="col col-33" style="text-align:right;"><p style=""></p></div>
+      </div>
+        
+      </div>
+      <div class="item item-text-wrap" style="text-align:center;">
+        {{data.pregunta}}
+      </div>
+      
+      <center><img width="60%" ng-src="{{data.archivo}}" > </center>
+      
+      <div class="item item-divider">
+        <div class="row">
+      <div class="col col-33">Oportunidades: {{data.op}}<p ></p></div>
+      <div class="col col-33"></div>
+      <div class="col col-33" style="text-align:right;">Puntos: {{data.score}}<p style=""></p></div>
+      </div>
+      </div> 
+    </div> 
+    <!--<div id="page-markdown3" style="text-align:center;">
+      <p style="color:#F6F3F3;" ng-bind="data.categoria"></p>
+    </div>
+    <div id="page-markdown5" style="text-align:center;">
+      <p style="color:#FFFFFF;" ng-bind="data.pregunta"></p>
+    </div> -->
+    
+    <!--<center><img width="170"  ng-src="{{data.archivo}}"></center> -->
+    <button id="page-button4" class="button button-stable  button-block" ng-click="btn1()" ng-bind="data.res1"></button>
+    <button id="page-button5" class="button button-stable  button-block" ng-click="btn2()" ng-bind="data.res2"></button>
+    <button id="page-button6" class="button button-stable  button-block" ng-click="btn3()" ng-bind="data.res3"></button>
+    <button id="page-button7" class="button button-assertive" ng-click="salir()">Salir</button>
+    </div>
+  </ion-content>
+</ion-view> 

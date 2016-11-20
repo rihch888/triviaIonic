@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "angular-scroll-glue": "^2.0.7",
-    "ng-scroll-glue": "^2.0.10"
+    "ng-scroll-glue": "^2.0.10",
+    "ng-cordova-oauth": "^0.2.10"
   }
 }
