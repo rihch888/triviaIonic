@@ -82,11 +82,25 @@ angular.module('app.routes', [])
     }
   })  
 
-      /*.state('chat', {
-    url: '/chat',
-    templateUrl: 'templates/chat.html',
-    controller: 'chatCtrl'
-  }) */
+    .state('menu.eventos', {
+    url: '/eventos',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/eventos.html',
+        controller: 'eventosCtrl'
+      }
+    }
+  })  
+    .state('menu.jugarEvento', {
+    url: '/jugarEvento',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/jugarEvento.html',
+        controller: 'jugarEventoCtrl'
+      }
+    }
+  }) 
+
 
 $urlRouterProvider.otherwise('/login')
 

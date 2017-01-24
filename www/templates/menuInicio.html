@@ -1,20 +1,38 @@
 <ion-view title="Login" id="login">
-  <ion-content padding="true" style="background: url(img/mountain.jpg) no-repeat center;background-size:cover;" >
-    <div>
-      <!--<img src="img/gyBPkZI2QFClGaVeuHbA_TfhIo1KyT0m8CfUh58Jl_preguntas_uvaq_logo.png" width="80%" height="auto" style="display: block; margin-left: auto; margin-right: auto;"> -->
-    </div>
-    <form id="page-form1" class="list" name="myForm">
+  <ion-content padding="false" scroll="false" style="background: rgb(255,173,31); background-size:cover;">
 
-    <label class="item item-input item-floating-label" style="border-top:none;border-left:none;border-right:none;" id="page-input1" name="correo" ng-model="data.username">
-        <input style="color:#FFF;font-weight:300;opacity:0.7;" type="email" placeholder="Correo Electrónico" ng-model="data.username">
-      </label> 
-      <label class="item item-input item-floating-label" style="border-top:none;border-left:none;border-right:none;" id="page-input2" name="pass" >
-        <input style="color:#FFF;font-weight:300;opacity:0.8;" type="password" placeholder="Contraseña" ng-model="data.password">
-      </label>
-    </form>
-    <button id="page-button1" style="font-weight:300;" class="button button-stable  button-block" ng-click="loginEmail()">Iniciar Sesión</button>
-    <button id="page-button2" style="font-weight:300;" class="button button-light  button-block button-outline" ng-click="irRegistro()">Regístrate</button>
-    <button id="page-button3" style="font-weight:300;" class="button button-light  button-block button-clear">¿Olvidaste tu contraseña?</button>
-    <!--<button id="page-button4" style="font-weight:300;" class="button button-positive  button-block icon-left ion-social-facebook" ng-click="loginFacebook()">Iniciar Sesión con Facebook</button> -->
+
+    <ion-slides disable-side-menu-drag="" options="{'loop': false}" slider="slider1" delegate-handle="slider1" id="page-slider1" style="width:100%;height:100%">
+
+      <ion-slide-page id="page-slide24" style="background: rgb(255,173,31); no-repeat center; padding:15px;">
+        <center><img src="img/firebase1.png" style="width:90%; margin-top:35%"></center>
+        <center><h3 style="color:white;">Plataforma web</h3></center>
+        <p style="color:white;">Usa la <b>plataforma web</b> para entrar a tu cuenta y poder ver las tablas de resultados de todas las competencias en las que has participado, así como los próximos eventos.</p>
+      </ion-slide-page>
+
+      <ion-slide-page id="page-slide25" style="background: rgb(136,106,234); no-repeat center;background-size:cover; padding:15px;">
+        <center><img src="img/firebase2.png" style="width:80%; margin-top:25%"></center>
+        <center><h3 style="color:white;">Competencia en tiempo real</h3></center>
+        <p style="color:white;">Participarás en <b>competencias en tiempo real</b> compitiendo contra tus compañeros y profesores para descubrir quién tiene más aciertos en un determinado tiempo.</p>
+      </ion-slide-page>
+      <ion-slide-page id="page-slide26" style="background: url(img/mountain.jpg) no-repeat center;background-size:cover;">
+        
+        <form id="page-form1" class="list" name="myForm">
+        <label class="item item-input item-floating-label" style="border-top:none;border-left:none;border-right:none;" id="page-input1" name="correo" ng-model="data.username">
+            <input style="color:#FFF;font-weight:300;opacity:0.7;" type="email" placeholder="Correo Electrónico" ng-model="data.username">
+          </label> 
+          <label class="item item-input item-floating-label" style="border-top:none;border-left:none;border-right:none;" id="page-input2" name="pass" >
+            <input style="color:#FFF;font-weight:300;opacity:0.8;" type="password" placeholder="Contraseña" ng-model="data.password">
+          </label>
+        </form>
+        <button id="page-button1" style="font-weight:300;" class="button button-stable  button-block" ng-click="loginEmail()">Iniciar Sesión</button>
+        <button id="page-button2" style="font-weight:300;" class="button button-light  button-block button-outline" ng-click="irRegistro()">Regístrate</button>
+        <button id="page-button3" style="font-weight:300;" class="button button-light  button-block button-clear">¿Olvidaste tu contraseña?</button> 
+        <!--<button id="page-button4" style="font-weight:300;" class="button button-positive  button-block icon-left ion-social-facebook" ng-click="loginFacebook()">Iniciar Sesión con Facebook</button> -->
+
+      </ion-slide-page>
+    </ion-slides>
+
+    
   </ion-content>
 </ion-view>
