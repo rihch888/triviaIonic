@@ -1,4 +1,4 @@
-<ion-view title="Puntuaciones" id="puntuaciones">
+<ion-view title="Puntuaciones" id="puntuaciones" cache-view="false">
   <ion-content padding="false" scroll="false" >
   <style>
   .top-container2{
@@ -9,7 +9,7 @@
 
   </style>
     <div class="top-container2" >
-
+    <center><h3>{{data.nombreEvento}}</h3></center>
       <ion-list >
         <ion-item class="item-avatar" id="page-list-item1" ng-repeat="score in scores | reverse" >
           <img src="img/user2.png">

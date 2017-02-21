@@ -220,65 +220,66 @@ angular.module('app.controllers', [])
   }
   })
 
-.controller("eventosCtrl", function($scope, Auth, Data, $firebaseArray, $localStorage) {
+.controller("eventosCtrl", function($scope, Auth, Data, $firebaseArray, $localStorage, $location) {
   $scope.eventos = {};
   $scope.data = {};
   var refEv = Data.child("eventos");
   var refSc = Data.child("Score");
-  //query: score del usuario con el id del evento
-  var i = 0;
-  refEv.orderByKey().on("child_added", function(snapshot) {
-      //alert(snapshot.child("nombre").val());
-      //alert(snapshot.child("estado").val());
-      //alert(snapshot.child("estado").val());
-
-      if (snapshot.child("estado").val()==0){
-        //alert(snapshot.key); 
-        $localStorage.evento=snapshot.key;
-      }
+  $localStorage.evento="";
+  /*refEv.orderByKey().on("child_added", function(snapshot) {
+      //TODOS LOS EVENTOS
+      $localStorage.evento=snapshot.key; 
       
-      
-      //alert(i);
-      //$scope.eventos[i].nombre=snapshot.child("nombre").val();
-      refSc.orderByChild("evento").equalTo(snapshot.key).on("child_added", function(snapshot2) {
-          //alert(snapshot2.child("score").val());
 
-          $scope.data.score=snapshot2.child("score").val();
-          //$scope.eventos.score=snapshot2.child("score").val;
-      });
-      //$scope.data.id=snapshot.key;
-      //alert(snapshot.key);
-
-      i++;
-    });
-
-    Auth.$onAuthStateChanged(function(firebaseUser) {
-        Data.child("users").child(firebaseUser.uid).once('value', function (snapshot) {
+    }); */
+    var accesoUsuario = 0;
+    Auth.$onAuthStateChanged(function(firebaseUser) { 
+        Data.child("users").child(firebaseUser.uid).once('value', function (snapshot) { //DATOS DE USUARIO LOGEADO
           var key = snapshot.key;
-          //alert();
           var accEv = snapshot.child("accesoEvento").val();
-          if(accEv==0){
-            //alert("no");
-            $scope.data.accesoEvento = 0;
+          //alert(accEv);
+          if(accEv==1){
+            accesoUsuario=1;
+            //alert("acceso usuario");
           }else{
-            //alert("si");
-            $scope.data.accesoEvento = 1;
+            accesoUsuario=0;
           } 
             
           // IMPORTANTE: Cuando se acabe el evento, cambiar "jugar" a ""
-          //alert(childKey+" : "+childKey2);
-          
-          
-          
         });
 
       });
 
+    $scope.ruta = function(obj){
+        if (obj.estado==0) {
+          //alert("Activo");
+          
+        if(accesoUsuario==1){ // acceso usuario activado
+          $location.url("/menu/jugar");
+          $localStorage.evento=obj;
+        }else{
+          $location.url("/menu/score");
+          $localStorage.evento=obj;
+        }
 
 
-  //$scope.data.est="prueba";
-  $scope.eventos = $firebaseArray(refEv);
 
+          
+        }else{
+          //alert("Inactivo");
+          //alert($location.url());
+          $location.url("/menu/score");
+          $localStorage.evento=obj;
+        }
+      }
+
+    
+    setTimeout(function () {
+      $scope.$apply(function () {
+        $scope.eventos = $firebaseArray(refEv);
+      });
+    }, 1000);
+    
 })
 
 .controller("chatCtrl", function($scope, $firebaseArray, Auth, Data) {
@@ -459,6 +460,7 @@ angular.module('app.controllers', [])
       //$scope.data.firebaseUser.displayname=firebaseUser.displayName;
       //alert($scope.data.firebaseUser.email);
       console.log(firebaseUser.displayName);
+
       
       Data.child("users").child(firebaseUser.uid).once('value', function (snapshot) {
         
@@ -474,16 +476,17 @@ angular.module('app.controllers', [])
     });
   $localStorage.score=0;
   $localStorage.op=5;
-  //$localStorage.evento="";
+  $localStorage.evento="";
 })
 
 .controller("jugarCtrl", function($scope, Auth, Data, $localStorage, $state) {
   $scope.data = {};
-  //$localStorage.$reset();
+  //$localStorage.clear();
+  
   //alert($localStorage.evento);
   //query para sacar todos los datos del evento $localStorage.evento
   if($localStorage.evento) {
-    var idEvento = $localStorage.evento;
+    var idEvento = $localStorage.evento.$id;
     Data.child("eventos").child(idEvento).once('value', function (snapshot) {
     $scope.data.evento=snapshot.child("nombre").val();
   });
@@ -547,9 +550,9 @@ angular.module('app.controllers', [])
   $scope.data = {};
   $scope.data.score = $localStorage.score;
   $scope.data.op = $localStorage.op;
-
-  if($localStorage.evento) {
-    var idEvento = $localStorage.evento;
+  //alert($localStorage.evento.$id);
+  if($localStorage.evento!="") {
+    var idEvento = $localStorage.evento.$id;
     Data.child("eventos").child(idEvento).once('value', function (snapshot) {
     $scope.data.evento=snapshot.child("nombre").val();
   });
@@ -662,6 +665,13 @@ angular.module('app.controllers', [])
           if (e) {
             
               Auth.$onAuthStateChanged(function(firebaseUser) {
+                
+              if($localStorage.evento!=""){
+                var updates = {};
+                updates['/users/' + firebaseUser.uid+ '/accesoEvento'] = 0;
+                Data.update(updates);
+              }
+
                 //alert(firebaseUser.uid);
                 var displayName = firebaseUser.displayname;
                 var email = firebaseUser.email;
@@ -669,7 +679,7 @@ angular.module('app.controllers', [])
                     name: displayName,
                     email: email,
                     score: $localStorage.score,
-                    evento: $localStorage.evento
+                    evento: $localStorage.evento.$id
                 }, function(error) {
                   if(error) {
                     alert(error);
@@ -677,9 +687,12 @@ angular.module('app.controllers', [])
                     $ionicHistory.nextViewOptions({
                       disableBack: true
                     });
+                   
+
                     $localStorage.score=0;
                     $localStorage.op=5;
                     $localStorage.evento="";
+                    
                     $scope.data.score=0;
                     $scope.data.op=5;
                     $state.go("menu.inicio");
@@ -854,20 +867,74 @@ $scope.btn3 = function() {
 
 })
 
-.controller("scoreCtrl", function($scope, Auth, Data, $firebaseArray) {
+.controller("scoreCtrl", function($scope, Auth, Data, $firebaseArray, $localStorage) {
   $scope.scores = {};
   var refScore = Data.child("Score");
-  //console.log($firebaseArray(refScore));
-  //$scope.scores = $firebaseArray(refScore);
-  //console.log($scope.scores);
-  //var array = {};
-  //item.order = -1 * item.likes. 
-  
 
-  var query = Data.child("Score").orderByChild('score');
-  $scope.scores = $firebaseArray(query);
-  //$scope.scores.reverse();
+  $scope.data.idEvento=$localStorage.evento.$id;
+  $scope.data.nombreEvento=$localStorage.evento.nombre;
+  //alert($localStorage.evento.nombre);
 
+  if ($localStorage.evento!="") {
+    var arr = [];
+    var query = Data.child("Score").orderByChild('evento').equalTo($localStorage.evento.$id);
+    query.on('value', function (snapshot){
+      
+      snapshot.forEach(function(child) {
+        arr.push(child.val());
+      });
+      //console.log(arr);
+      for (var i = 1; i < arr.length; i++) {
+        for (var j = 0; j < (arr.length-i); j++) {
+          //console.log(arr[j+1].score);
+          if(arr[j].score>arr[j+1].score){
+             var aux=arr[j];
+             arr[j]=arr[j+1];
+             arr[j+1]=aux;
+          }
+        }
+      }
+      //console.log(arr);
+    });
+
+    setTimeout(function () {
+      $scope.$apply(function () {
+        $scope.scores = arr;
+      });
+    }, 1000);
+    
+
+  }else{
+    //hacer query para todos los scores que no tienen "evento"
+  //var query = Data.child("Score").orderByChild('score');
+  //$scope.scores = $firebaseArray(query);
+  var arr = [];
+    var query = Data.child("Score").orderByChild('evento').equalTo("");
+    query.on('value', function (snapshot){
+      
+      snapshot.forEach(function(child) {
+        arr.push(child.val());
+      });
+      //console.log(arr);
+      for (var i = 1; i < arr.length; i++) {
+        for (var j = 0; j < (arr.length-i); j++) {
+          //console.log(arr[j+1].score);
+          if(arr[j].score>arr[j+1].score){
+             var aux=arr[j];
+             arr[j]=arr[j+1];
+             arr[j+1]=aux;
+          }
+        }
+      }
+      //console.log(arr);
+    });
+
+    setTimeout(function () {
+      $scope.$apply(function () {
+        $scope.scores = arr;
+      });
+    }, 1000);
+  }
   
   
   //alert($firebaseArray(refScore).$keyAt(0));

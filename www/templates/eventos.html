@@ -1,4 +1,4 @@
-<ion-view title="Eventos" id="eventos">
+<ion-view title="Eventos" id="eventos" cache-view="false">
   <ion-content padding="false" scroll="false" >
   <style>
   .top-container2{
@@ -11,9 +11,9 @@
     <div class="" >
 
       <ion-list >
-        <div ng-if="data.accesoEvento==0">
+        <div>
           
-          <a class="item item-icon-left item-avatar" ng-href=""  id="page-list-item1" ng-repeat="evento in eventos" >
+          <a class="item item-icon-left item-avatar"  ng-click="ruta(evento)" id="page-list-item1" ng-repeat="evento in eventos" >
           <img src="img/calendar1.png">
           <h2 style="display: inline-block;">{{evento.nombre}}</h2><p style="display: inline-block;">&nbsp; {{evento.fecha}}</p>
           <p>Inscritos: {{evento.inscritos}} Capacidad: {{evento.capacidad}}</p>
@@ -21,16 +21,7 @@
           <span class="badge badge-positive" ng-show="!evento.estado" class="ng-hide">Nuevo</span> 
         </a>
         </div>
-        <div ng-if="data.accesoEvento==1">
         
-          <a class="item item-icon-left item-avatar" ng-href="{{evento.jugar}}"  id="page-list-item1" ng-repeat="evento in eventos" >
-          <img src="img/calendar1.png">
-          <h2 style="display: inline-block;">{{evento.nombre}}</h2><p style="display: inline-block;">&nbsp; {{evento.fecha}}</p>
-          <p>Inscritos: {{evento.inscritos}} Capacidad: {{evento.capacidad}}</p>
-          <span class="badge badge-balanced" ng-show="evento.estado" ><i class="ion-checkmark-round"></i></span>
-          <span class="badge badge-positive" ng-show="!evento.estado" class="ng-hide">Nuevo</span> 
-        </a>
-        </div>
         
       </ion-list>
     </div>
