@@ -650,6 +650,7 @@ angular.module('app.controllers', [])
       }
 
       $scope.showPopupLose = function () {
+        $timeout.cancel(time);
       var myPopup1 = $ionicPopup.show({
       template: '<center><img width="40%" ng-src="img/sad1.png" ></center>',
       title: 'Perdiste todas tus oportunidades!',
@@ -688,7 +689,7 @@ angular.module('app.controllers', [])
                       disableBack: true
                     });
                    
-
+                    $timeout.cancel(time);
                     $localStorage.score=0;
                     $localStorage.op=5;
                     $localStorage.evento="";
@@ -770,6 +771,7 @@ angular.module('app.controllers', [])
 
     $scope.salir = function(){
     // An elaborate, custom popup
+    $timeout.cancel(time);
     var myPopup = $ionicPopup.show({
       template: '',
       title: '¿Seguro que deseas salir del juego?',
@@ -788,11 +790,17 @@ angular.module('app.controllers', [])
               
               var displayName = firebaseUser.displayname;
               var email = firebaseUser.email;
+              if($localStorage.evento!=""){
+                var updates = {};
+                updates['/users/' + firebaseUser.uid+ '/accesoEvento'] = 0;
+                Data.update(updates);
+              }
               
               Data.child("Score").push().set({
                     name: displayName,
                     email: email,
                     score: $localStorage.score,
+                    evento: $localStorage.evento.$id
                 }, function(error) {
                   if(error) {
                     alert(error);
@@ -802,8 +810,10 @@ angular.module('app.controllers', [])
                     });
                     $localStorage.score=0;
                     $localStorage.op=5;
+                    $localStorage.evento="";
                     $scope.data.score=0;
                     $scope.data.op=5;
+
                     $state.go("menu.inicio");
                   }
                 });
@@ -811,6 +821,8 @@ angular.module('app.controllers', [])
               
             });
             
+          }else{
+            //hacer que continue el counter en donde se quedo
           }
         }
         }
