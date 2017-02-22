@@ -666,11 +666,14 @@ angular.module('app.controllers', [])
           if (e) {
             
               Auth.$onAuthStateChanged(function(firebaseUser) {
-                
+                var idEv= "";
               if($localStorage.evento!=""){
                 var updates = {};
                 updates['/users/' + firebaseUser.uid+ '/accesoEvento'] = 0;
                 Data.update(updates);
+                idEv=$localStorage.evento.$id;
+              }else{
+                idEv="";
               }
 
                 //alert(firebaseUser.uid);
@@ -680,7 +683,7 @@ angular.module('app.controllers', [])
                     name: displayName,
                     email: email,
                     score: $localStorage.score,
-                    evento: $localStorage.evento.$id
+                    evento: idEv
                 }, function(error) {
                   if(error) {
                     alert(error);
@@ -693,7 +696,7 @@ angular.module('app.controllers', [])
                     $localStorage.score=0;
                     $localStorage.op=5;
                     $localStorage.evento="";
-                    
+                    idEv="";
                     $scope.data.score=0;
                     $scope.data.op=5;
                     $state.go("menu.inicio");
@@ -795,12 +798,18 @@ angular.module('app.controllers', [])
                 updates['/users/' + firebaseUser.uid+ '/accesoEvento'] = 0;
                 Data.update(updates);
               }
+              var idEv= "";
+              if($localStorage.evento!=""){
+                idEv = $localStorage.evento.$id;
+              }else{
+                idEv = "";
+              }
               
               Data.child("Score").push().set({
                     name: displayName,
                     email: email,
                     score: $localStorage.score,
-                    evento: $localStorage.evento.$id
+                    evento: idEv
                 }, function(error) {
                   if(error) {
                     alert(error);
@@ -813,7 +822,7 @@ angular.module('app.controllers', [])
                     $localStorage.evento="";
                     $scope.data.score=0;
                     $scope.data.op=5;
-
+                    idEv="";
                     $state.go("menu.inicio");
                   }
                 });
