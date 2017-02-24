@@ -51,7 +51,7 @@ angular.module('app.controllers', [])
         { text: 'Cancelar' },
         {
           text: '<b>Si</b>',
-          type: 'button-assertive',
+          type: 'button-calm',
           onTap: function(e) {
             //alert(e);
           if(e) {
@@ -208,7 +208,8 @@ angular.module('app.controllers', [])
 
           Data.child("users").child(firebaseUser.uid).set({
                 email: email,
-                displayName: displayname
+                displayName: displayname,
+                accesoEvento: 0
             });
           //alert("Usuario creado uid: "+ firebaseUser.uid);
          $state.go('login');
@@ -568,7 +569,7 @@ angular.module('app.controllers', [])
         
         {
           text: '<b>Aceptar</b>',
-          type: 'button-assertive',
+          type: 'button-calm',
           onTap: function(e) {
             //alert(e);
           if (e) {
@@ -660,7 +661,7 @@ angular.module('app.controllers', [])
         
         {
           text: '<b>Aceptar</b>',
-          type: 'button-positive',
+          type: 'button-calm',
           onTap: function(e) {
             //alert(e);
           if (e) {
@@ -721,7 +722,7 @@ angular.module('app.controllers', [])
         
         {
           text: '<b>Aceptar</b>',
-          type: 'button-balanced',
+          type: 'button-calm',
           onTap: function(e) {
             //alert(e);
           if(e) {
@@ -754,7 +755,7 @@ angular.module('app.controllers', [])
         
         {
           text: '<b>Aceptar</b>',
-          type: 'button-assertive',
+          type: 'button-calm',
           onTap: function(e) {
             //alert(e);
           if (e) {
@@ -784,7 +785,7 @@ angular.module('app.controllers', [])
         { text: 'Cancelar' },
         {
           text: '<b>Si</b>',
-          type: 'button-assertive',
+          type: 'button-calm',
           onTap: function(e) {
             //alert(e);
           if(e) {
