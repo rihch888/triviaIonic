@@ -107,7 +107,7 @@ angular.module('app.controllers', [])
       
       {
         text: '<b>Aceptar</b>',
-        type: 'button-positive',
+        type: 'button-calm',
 
       }
     ]
