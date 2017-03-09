@@ -13,11 +13,36 @@
 	color: rgba(255, 255, 255, 0.8);
 }
 </style>
-<ion-view view-title="" cache-view="false" style="background-color: #3a556a;">
-  <ion-content padding="true" class="has-header">
+<ion-view view-title="" cache-view="false" style="background-color: #3a556a;" >
+  <ion-content padding="true" class="has-header" scroll="false">
   	<center><h1 style="color: rgba(255, 255, 255, 0.8);">{{data.evento}}</h1></center>
-    <button id="page-button4" class="button btn-pregunta button-block" ng-click="random()" >Pregunta aleatoria</button>
+    <!--<button id="page-button4" class="button btn-pregunta button-block" ng-click="random()" >Pregunta aleatoria</button>
     <center><h2 style="color: rgba(255, 255, 255, 0.8);">{{data.categoria}}</h2></center>
-    <button id="page-button4" class="button btn-pregunta button-block" ng-show="play" ng-click="jugar()" >Jugar</button>
+    <button id="page-button4" class="button btn-pregunta button-block" ng-show="play" ng-click="jugar()" >Jugar</button>-->
+
+    
+
+
+    <swipe-cards>
+      <swipe-card on-card-swipe="cardSwiped()" id="start-card">
+        Desliza hacia abajo
+      </swipe-card>
+      <swipe-card ng-repeat="card in cards" on-destroy="cardDestroyed($index)" on-card-swipe="cardSwiped($index)">
+        <div ng-controller="CardCtrl">
+          <div class="title">
+            {{card.title}}
+          </div>
+          <div class="image">
+            <img ng-src="{{card.image}}">
+          </div>
+          <div class="button-bar">
+            <button class="button button-clear button-balanced" ng-click="jugar()">Contestar</button>
+            <button class="button button-clear button-assertive" ng-click="goAway()">Declinar</button>
+          </div>
+        </div>
+      </swipe-card>
+    </swipe-cards>
+  
+
   </ion-content>
 </ion-view>

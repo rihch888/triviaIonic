@@ -221,7 +221,7 @@ angular.module('app.controllers', [])
   }
   })
 
-.controller("eventosCtrl", function($scope, Auth, Data, $firebaseArray, $localStorage, $location) {
+.controller("eventosCtrl", function($scope, Auth, Data, $firebaseArray, $localStorage, $location, $ionicLoading) {
   $scope.eventos = {};
   $scope.data = {};
   var refEv = Data.child("eventos");
@@ -230,9 +230,21 @@ angular.module('app.controllers', [])
   /*refEv.orderByKey().on("child_added", function(snapshot) {
       //TODOS LOS EVENTOS
       $localStorage.evento=snapshot.key; 
-      
 
     }); */
+    $scope.show = function() {
+      $ionicLoading.show({
+          template: 'Cargando...<br><br><ion-spinner icon="bubbles"></ion-spinner>',
+      }).then(function(){
+          //console.log("The loading indicator is now displayed");
+      });
+    };
+    $scope.hide = function(){
+        $ionicLoading.hide().then(function(){
+            //console.log("The loading indicator is now hidden");
+        });
+    };
+    $scope.show();
     var accesoUsuario = 0;
     Auth.$onAuthStateChanged(function(firebaseUser) { 
         Data.child("users").child(firebaseUser.uid).once('value', function (snapshot) { //DATOS DE USUARIO LOGEADO
@@ -278,8 +290,9 @@ angular.module('app.controllers', [])
     setTimeout(function () {
       $scope.$apply(function () {
         $scope.eventos = $firebaseArray(refEv);
+        $scope.hide();
       });
-    }, 1000);
+    }, 500);
     
 })
 
@@ -480,8 +493,78 @@ angular.module('app.controllers', [])
   $localStorage.evento="";
 })
 
-.controller("jugarCtrl", function($scope, Auth, Data, $localStorage, $state) {
+.controller("jugarCtrl", function($scope, Auth, Data, $localStorage, $state ,$ionicSwipeCardDelegate) {
   $scope.data = {};
+
+  var cardTypes = [{
+    title: 'Literatura',
+    image: 'img/pic.png'
+  }, {
+    title: 'Pintura',
+    image: 'img/pic.png'
+  }, {
+    title: 'Musica',
+    image: 'img/pic2.png'
+  }, {
+    title: 'Cine',
+    image: 'img/pic3.png'
+  }, {
+    title: 'Arquitectura',
+    image: 'img/pic4.png'
+  }];
+
+  $scope.cards = Array.prototype.slice.call(cardTypes, 0, 0);
+
+  $scope.cardSwiped = function(index) {
+    $scope.addCard();
+  };
+
+  $scope.cardDestroyed = function(index) {
+    $scope.cards.splice(index, 1);
+  };
+
+  $scope.addCard = function() {
+
+    var newCard = cardTypes[Math.floor(Math.random() * cardTypes.length)];
+    newCard.id = Math.random();
+    $scope.cards.push(angular.extend({}, newCard));
+
+    Data.child("preguntas").orderByChild('categoria').equalTo(newCard.title).once('value', function (snapshot) {
+      //alert("entra 2");
+      var i = 0;
+      var rand = Math.floor(Math.random() * snapshot.numChildren());
+      snapshot.forEach(function(snapshot) {
+        //alert("entra 3");
+        //alert(snapshot.val().categoria);
+        //alert(i);
+        if (i == rand) {
+          
+          //alert(snapshot.val().pregunta);
+          //alert(snapshot.val().categoria);
+          
+          $localStorage.pregunta=snapshot.val().pregunta;
+          $localStorage.res1=snapshot.val().res1;
+          $localStorage.res2=snapshot.val().res2;
+          $localStorage.res3=snapshot.val().res3;
+          $localStorage.correcta=snapshot.val().correcta;
+          $localStorage.archivo=snapshot.val().archivo;
+          $localStorage.categoria=snapshot.val().categoria;
+          //alert(i+" rand: "+snapshot.val().pregunta);
+          setTimeout(function () {
+          $scope.$apply(function () {
+            $scope.data.categoria=snapshot.val().categoria;
+          });
+          }, 50);
+        }
+        i++;
+      });
+    });
+    
+    $scope.play=true;
+
+    
+  }
+
   //$localStorage.clear();
   
   //alert($localStorage.evento);
@@ -496,7 +579,7 @@ angular.module('app.controllers', [])
   
   
 
-  $scope.random = function() {
+  /*$scope.random = function() {
     //alert("entra 1");
     Data.child("preguntas").once('value', function (snapshot) {
       //alert("entra 2");
@@ -530,7 +613,7 @@ angular.module('app.controllers', [])
     });
     
     $scope.play=true;
-  }
+  } */
 
   $scope.jugar = function() {
     setTimeout(function () {
@@ -545,7 +628,12 @@ angular.module('app.controllers', [])
   
 })
 
-
+.controller('CardCtrl', function($scope, $ionicSwipeCardDelegate) {
+  $scope.goAway = function() {
+    var card = $ionicSwipeCardDelegate.getSwipeableCard($scope);
+    card.swipe();
+  };
+})
 
 .controller("preguntasCtrl", function($scope, Auth, Data, $ionicLoading, $localStorage, $ionicPopup, $state, $ionicHistory,  $interval, $timeout) {
   $scope.data = {};
@@ -889,13 +977,27 @@ $scope.btn3 = function() {
 
 })
 
-.controller("scoreCtrl", function($scope, Auth, Data, $firebaseArray, $localStorage) {
+.controller("scoreCtrl", function($scope, Auth, Data, $firebaseArray, $localStorage, $ionicLoading) {
   $scope.scores = {};
   var refScore = Data.child("Score");
 
   $scope.data.idEvento=$localStorage.evento.$id;
   $scope.data.nombreEvento=$localStorage.evento.nombre;
   //alert($localStorage.evento.nombre);
+
+  $scope.show = function() {
+    $ionicLoading.show({
+        template: 'Cargando...<br><br><ion-spinner icon="bubbles"></ion-spinner>',
+    }).then(function(){
+        //console.log("The loading indicator is now displayed");
+    });
+  };
+  $scope.hide = function(){
+      $ionicLoading.hide().then(function(){
+          //console.log("The loading indicator is now hidden");
+      });
+  };
+  $scope.show();
 
   if ($localStorage.evento!="") {
     var arr = [];
@@ -922,8 +1024,9 @@ $scope.btn3 = function() {
     setTimeout(function () {
       $scope.$apply(function () {
         $scope.scores = arr;
+        $scope.hide();
       });
-    }, 1000);
+    }, 500);
     
 
   }else{
@@ -954,8 +1057,10 @@ $scope.btn3 = function() {
     setTimeout(function () {
       $scope.$apply(function () {
         $scope.scores = arr;
+        $scope.hide();
       });
-    }, 1000);
+    }, 500);
+    
   }
   
   
@@ -965,5 +1070,4 @@ $scope.btn3 = function() {
     var childKey2 = snapshot.child("email").val();
     $scope.scores.userName = childKey;
   }); */
-})
-
+});
