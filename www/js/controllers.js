@@ -498,7 +498,7 @@ angular.module('app.controllers', [])
 
   var cardTypes = [{
     title: 'Literatura',
-    image: 'img/winter.jpg'
+    image: 'img/img1.jpg'
   }, {
     title: 'Pintura',
     image: 'img/pic.png'
@@ -507,7 +507,7 @@ angular.module('app.controllers', [])
     image: 'img/pic2.png'
   }, {
     title: 'Cine',
-    image: 'img/pic3.png'
+    image: 'img/river.jpg'
   }, {
     title: 'Arquitectura',
     image: 'img/pic4.png'
