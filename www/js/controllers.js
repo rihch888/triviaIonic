@@ -1,5 +1,5 @@
 angular.module('app.controllers', [])
-  
+
 .controller('menuCtrl', function($scope, $state, $ionicPopup, Auth, Data, $ionicLoading) {
   $scope.data = {};
   $scope.show = function() {
@@ -21,11 +21,11 @@ angular.module('app.controllers', [])
       //$scope.data.firebaseUser.displayname=firebaseUser.displayName;
       //alert($scope.data.firebaseUser.email);
       console.log(firebaseUser.displayName);
-      
+
       Data.child("users").child(firebaseUser.uid).once('value', function (snapshot) {
         var key = snapshot.key;
-        var childKey = snapshot.child("displayName").val(); 
-        var childKey2 = snapshot.child("email").val(); 
+        var childKey = snapshot.child("displayName").val();
+        var childKey2 = snapshot.child("email").val();
         //alert(childKey+" : "+childKey2);
         setTimeout(function () {
           $scope.$apply(function () {
@@ -33,7 +33,7 @@ angular.module('app.controllers', [])
             $scope.hide();
           });
           }, 1);
-        
+
         //alert($scope.data.firebaseUser.displayname);
       });
 
@@ -61,14 +61,14 @@ angular.module('app.controllers', [])
               // Sign-out successful.
             }, function(error) {
               // An error happened.
-            }); 
+            });
           }
         }
         }
       ]
     });
-    
-  
+
+
     /*firebase.auth().signOut().then(function() {
       $state.go('menu.login');
       // Sign-out successful.
@@ -104,7 +104,7 @@ angular.module('app.controllers', [])
     subTitle: 'Por favor vuelve a ingresar tus datos',
     scope: $scope,
     buttons: [
-      
+
       {
         text: '<b>Aceptar</b>',
         type: 'button-calm',
@@ -135,7 +135,7 @@ angular.module('app.controllers', [])
         var errorCode = error.code;
         var errorMessage = error.message;
         $scope.showPopup();
-        
+
         $scope.data.password = "";
         //alert("Usuario o contraseña incorrecta");
         // ...
@@ -168,7 +168,7 @@ angular.module('app.controllers', [])
         //alert("Error");
         alert("Error -> " + error);
     }); */
-   
+
     /*firebase.auth().signInWithPopup(provider).then(function(result) {
       // This gives you a Facebook Access Token. You can use it to access the Facebook API.
       var token = result.credential.accessToken;
@@ -227,11 +227,42 @@ angular.module('app.controllers', [])
   var refEv = Data.child("eventos");
   var refSc = Data.child("Score");
   $localStorage.evento="";
-  /*refEv.orderByKey().on("child_added", function(snapshot) {
-      //TODOS LOS EVENTOS
-      $localStorage.evento=snapshot.key; 
 
-    }); */
+  $scope.qr = function(){
+    //aparece lector qr que contiene id del nuevo evento. Ejemplo evento con id: -Kj0ZSveZJSJlVg6Z2rJ
+    var idQREvento = "-Kj5pENaEKwLp0DcXSa2"; //-KaG0ysHI3TlR5TD1orw, -Kj0ZSveZJSJlVg6Z2rJ, -Kj4TMecXX-Dss7QoY1v ,-Kj5pENaEKwLp0DcXSa2
+    Auth.$onAuthStateChanged(function(firebaseUser) {
+      var i = 0;
+      Data.child("eventos-users").orderByChild('idUser').equalTo(firebaseUser.uid).once('value', function (snapshot) {
+          snapshot.forEach(function(snapshot) {// todos los registros del usuario en eventos
+            console.log(snapshot.child("idEvento").val());
+            var idE = snapshot.child("idEvento").val();
+            if(idE==idQREvento) { // si existe el usuario está inscrito al nuevo evento
+              i++;
+            }
+          });
+          console.log(i);
+          if (i==0) {
+            console.log("usuario NO inscrito al nuevo evento");
+            Data.child("eventos-users").push().set({
+                  idEvento: idQREvento,
+                  idUser: firebaseUser.uid,
+                  estado: 0
+              });
+          }else{
+            console.log("usuario inscrito al nuevo evento");
+          }
+        });
+      });
+      //incrementamos en 'eventos' inscritos + 1
+      var upd = {};
+      Data.child("eventos").child(idQREvento).once('value', function (snapshot) {
+        console.log(snapshot.child('inscritos').val());
+        var inscritos = snapshot.child('inscritos').val()
+        upd['/eventos/' + idQREvento+ '/inscritos'] = inscritos+1;
+        Data.update(upd);
+      });
+  };
     $scope.show = function() {
       $ionicLoading.show({
           template: 'Cargando...<br><br><ion-spinner icon="bubbles"></ion-spinner>',
@@ -246,54 +277,92 @@ angular.module('app.controllers', [])
     };
     $scope.show();
     var accesoUsuario = 0;
-    Auth.$onAuthStateChanged(function(firebaseUser) { 
+    Auth.$onAuthStateChanged(function(firebaseUser) {
         Data.child("users").child(firebaseUser.uid).once('value', function (snapshot) { //DATOS DE USUARIO LOGEADO
           var key = snapshot.key;
           var accEv = snapshot.child("accesoEvento").val();
-          //alert(accEv);
           if(accEv==1){
             accesoUsuario=1;
-            //alert("acceso usuario");
           }else{
             accesoUsuario=0;
-          } 
-            
+          }
           // IMPORTANTE: Cuando se acabe el evento, cambiar "jugar" a ""
         });
-
       });
-
     $scope.ruta = function(obj){
-        if (obj.estado==0) {
-          //alert("Activo");
-          
-        if(accesoUsuario==1){ // acceso usuario activado
-          $location.url("/menu/jugar");
-          $localStorage.evento=obj;
-        }else{
-          $location.url("/menu/score");
-          $localStorage.evento=obj;
-        }
+      var idEvSel=obj.id;
 
-
-
-          
-        }else{
-          //alert("Inactivo");
-          //alert($location.url());
-          $location.url("/menu/score");
-          $localStorage.evento=obj;
-        }
+      Auth.$onAuthStateChanged(function(firebaseUser) {
+          Data.child("eventos-users").orderByChild('idUser').equalTo(firebaseUser.uid).once('value', function (snapshot) {
+            snapshot.forEach(function(snapshot) {// cada cosa a dentro de esto lo hace dos veces :(
+              $scope.existeEvento = false;
+              var idEv = snapshot.child("idEvento").val();
+              var estadoEventoSel = snapshot.child("estado").val();
+              if (idEv==idEvSel) {
+                console.log(idEv);
+                if (estadoEventoSel==0) {
+                  setTimeout(function () {
+                    $scope.$apply(function () {
+                      console.log("estado eventos-users = 0");
+                      $location.url("/menu/eventos");
+                    });
+                  }, 50);
+                }else if (estadoEventoSel==1) {
+                  setTimeout(function () {
+                    $scope.$apply(function () {
+                      console.log("estado eventos-users = 1");
+                      $location.url("/menu/jugar");
+                      $localStorage.evento=obj;
+                    });
+                  }, 50);
+                }else if (estadoEventoSel==2) {
+                  setTimeout(function () {
+                    $scope.$apply(function () {
+                      console.log("estado eventos-users = 2");
+                      $location.url("/menu/score");
+                      $localStorage.evento=obj;
+                    });
+                  }, 50);
+                }
+              }
+            });
+          });
+        });
       }
 
-    
-    setTimeout(function () {
+      $scope.eventos = [];
+      Auth.$onAuthStateChanged(function(firebaseUser) {
+          Data.child("eventos-users").orderByChild('idUser').equalTo(firebaseUser.uid).once('value', function (snapshot) {
+            snapshot.forEach(function(snapshot) {
+              var idEvento = snapshot.child("idEvento").val();
+              var estado = snapshot.child("estado").val();
+              Data.child("eventos").child(idEvento).once('value', function (snapshot) {
+                var id = snapshot.key;
+                var capacidad = snapshot.child("capacidad").val();
+                var fecha = snapshot.child("fecha").val();
+                var inscritos = snapshot.child("inscritos").val();
+                var nombre = snapshot.child("nombre").val();
+                    $scope.eventos.push({
+                      id : id,
+                      capacidad : capacidad,
+                      estado : estado,
+                      fecha : fecha,
+                      inscritos : inscritos,
+                      nombre : nombre
+                    });
+                    $scope.hide();
+              });
+            });
+          });
+        });
+    /*setTimeout(function () {
       $scope.$apply(function () {
-        $scope.eventos = $firebaseArray(refEv);
+        $scope.eventos = eventos;
+        console.log(eventos);
         $scope.hide();
       });
-    }, 500);
-    
+    }, 500);*/
+
 })
 
 .controller("chatCtrl", function($scope, $firebaseArray, Auth, Data) {
@@ -309,8 +378,8 @@ angular.module('app.controllers', [])
       $scope.data.firebaseUser.displayname = firebaseUser.displayName;
       Data.child("users").child(firebaseUser.uid).once('value', function (snapshot) {
         var key = snapshot.key;
-        var childKey = snapshot.child("displayName").val(); 
-        var childKey2 = snapshot.child("email").val(); 
+        var childKey = snapshot.child("displayName").val();
+        var childKey2 = snapshot.child("email").val();
         //alert(childKey+" : "+childKey2);
         $scope.data.firebaseUser.displayname = childKey;
       });
@@ -319,7 +388,7 @@ angular.module('app.controllers', [])
       var refMsg = Data.child("messages");
       // create a synchronized array
       $scope.messages = $firebaseArray(refMsg);
-      
+
       // add new items to the array
       // the message is automatically added to our Firebase database!
       $scope.addMessage = function() {
@@ -342,11 +411,11 @@ angular.module('app.controllers', [])
       //$scope.data.firebaseUser.displayname=firebaseUser.displayName;
       //alert($scope.data.firebaseUser.email);
       console.log(firebaseUser.displayName);
-      
+
       Data.child("users").child(firebaseUser.uid).once('value', function (snapshot) {
         var key = snapshot.key;
-        var childKey = snapshot.child("displayName").val(); 
-        var childKey2 = snapshot.child("email").val(); 
+        var childKey = snapshot.child("displayName").val();
+        var childKey2 = snapshot.child("email").val();
         //alert(childKey+" : "+childKey2);
         $scope.data.firebaseUser.displayname = childKey;
 
@@ -355,11 +424,11 @@ angular.module('app.controllers', [])
 
     });
 
-  
+
   /*function dataURItoBlob(dataURI) {
     'use strict'
-    var byteString, 
-        mimestring 
+    var byteString,
+        mimestring
 
     if(dataURI.split(',')[0].indexOf('base64') !== -1 ) {
         byteString = atob(dataURI.split(',')[1])
@@ -380,7 +449,7 @@ angular.module('app.controllers', [])
 
   $scope.upload = function() {
     //alert("entra");
-    
+
     var options = {
       quality : 75,
       destinationType: Camera.DestinationType.FILE_URI,
@@ -391,7 +460,7 @@ angular.module('app.controllers', [])
       mediaType: Camera.MediaType.PICTURE,
       targetWidth: 500,
       targetHeight: 500,
-      
+
     }
     $cordovaCamera.getPicture(options).then(function(imageData){
       Auth.$onAuthStateChanged(function(firebaseUser) {
@@ -417,14 +486,14 @@ angular.module('app.controllers', [])
           alert("error: "+error);
             console.error(error);
         }); */
-        
+
         /*window.resolveLocalFileSystemURL(imageData, function (fileEntry) {
              fileEntry.file(function (file) {
                  var reader = new FileReader();
                  reader.onloadend = function () {
                           // This blob object can be saved to firebase
                           var blob = new Blob([new Uint8Array(this.result)], { type: "image/jpeg" });
-                          alert("si");               
+                          alert("si");
                           //sendToFirebase(blob);
                  };
                  reader.readAsArrayBuffer(file);
@@ -443,27 +512,27 @@ angular.module('app.controllers', [])
           alert("error"+error);
             console.error(error);
         });*/
-      
+
       // ---------------------------------------------------------------------------
       //var dataURL = imageData.toDataURL('image/jpeg', 0.5);
       //var blob = dataURItoBlob(dataURL);
       //var blob = dataURItoBlob(imageData);
       //var storageRef = firebase.storage().ref().child("photos/photo.jpg").put(imageData[0]);
-      
+
       //alert("alerta exito!");
-      
+
       //Data.child("users").child(firebaseUser.uid).update({
         //displayName: "Ricardo 888"
       //  avatar: imageData
-      //}); 
-      
+      //});
+
       //alert("alerta 3: "+firebaseUser.uid);
       });
     }, function(error){
       alert("error");
       console.error("ERROR: "+error);
     });
-    
+
     }
 })
 
@@ -475,14 +544,14 @@ angular.module('app.controllers', [])
       //alert($scope.data.firebaseUser.email);
       console.log(firebaseUser.displayName);
 
-      
+
       Data.child("users").child(firebaseUser.uid).once('value', function (snapshot) {
-        
-        
+
+
         //setTimeout(function () {
           $scope.$apply(function () {
-            $scope.data.name = snapshot.child("displayName").val(); 
-            
+            $scope.data.name = snapshot.child("displayName").val();
+
           });
           //}, 1);
       });
@@ -538,10 +607,10 @@ angular.module('app.controllers', [])
         //alert(snapshot.val().categoria);
         //alert(i);
         if (i == rand) {
-          
+
           //alert(snapshot.val().pregunta);
           //alert(snapshot.val().categoria);
-          
+
           $localStorage.pregunta=snapshot.val().pregunta;
           $localStorage.res1=snapshot.val().res1;
           $localStorage.res2=snapshot.val().res2;
@@ -559,25 +628,25 @@ angular.module('app.controllers', [])
         i++;
       });
     });
-    
+
     $scope.play=true;
 
-    
+
   }
 
   //$localStorage.clear();
-  
+
   //alert($localStorage.evento);
   //query para sacar todos los datos del evento $localStorage.evento
   if($localStorage.evento) {
-    var idEvento = $localStorage.evento.$id;
+    var idEvento = $localStorage.evento.id;
     Data.child("eventos").child(idEvento).once('value', function (snapshot) {
     $scope.data.evento=snapshot.child("nombre").val();
   });
   }else{
   }
-  
-  
+
+
 
   /*$scope.random = function() {
     //alert("entra 1");
@@ -590,10 +659,10 @@ angular.module('app.controllers', [])
         //alert(snapshot.val().categoria);
         //alert(i);
         if (i == rand) {
-          
+
           //alert(snapshot.val().pregunta);
           //alert(snapshot.val().categoria);
-          
+
           $localStorage.pregunta=snapshot.val().pregunta;
           $localStorage.res1=snapshot.val().res1;
           $localStorage.res2=snapshot.val().res2;
@@ -611,7 +680,7 @@ angular.module('app.controllers', [])
         i++;
       });
     });
-    
+
     $scope.play=true;
   } */
 
@@ -625,7 +694,7 @@ angular.module('app.controllers', [])
 
     $state.go('menu.preguntas');
   }
-  
+
 })
 
 .controller('CardCtrl', function($scope, $ionicSwipeCardDelegate) {
@@ -639,9 +708,9 @@ angular.module('app.controllers', [])
   $scope.data = {};
   $scope.data.score = $localStorage.score;
   $scope.data.op = $localStorage.op;
-  //alert($localStorage.evento.$id);
+  //alert($localStorage.evento.id);
   if($localStorage.evento!="") {
-    var idEvento = $localStorage.evento.$id;
+    var idEvento = $localStorage.evento.id;
     Data.child("eventos").child(idEvento).once('value', function (snapshot) {
     $scope.data.evento=snapshot.child("nombre").val();
   });
@@ -654,7 +723,7 @@ angular.module('app.controllers', [])
       subTitle: '',
       scope: $scope,
       buttons: [
-        
+
         {
           text: '<b>Aceptar</b>',
           type: 'button-calm',
@@ -666,8 +735,8 @@ angular.module('app.controllers', [])
               $scope.showPopupLose();
             } else {
               $state.go("menu.jugar");
-            } 
-            
+            }
+
           }
         }
         }
@@ -675,19 +744,19 @@ angular.module('app.controllers', [])
     });
     }
 
- 
+
    // q29 s15
   var time = null;
   $scope.counter = 100;
   $scope.startTimer = function() {
      var countUp = function() {
-        
+
         $scope.counter-= 1;
         time = $timeout(countUp, 150);
         //console.log($q.counter);
-        if ($scope.counter==0) { 
+        if ($scope.counter==0) {
           //alert("funciona!"+$q.counter);
-          
+
           $timeout.cancel(time);
           //$scope.counter = 100;
           $scope.showPopupTime();
@@ -698,9 +767,9 @@ angular.module('app.controllers', [])
 
 
 
-     
-    
-  
+
+
+
   $scope.show = function() {
     $ionicLoading.show({
         template: 'Cargando...<br><br><ion-spinner icon="bubbles"></ion-spinner>',
@@ -746,21 +815,37 @@ angular.module('app.controllers', [])
       subTitle: 'Tu score es de: '+$localStorage.score,
       scope: $scope,
       buttons: [
-        
+
         {
           text: '<b>Aceptar</b>',
           type: 'button-calm',
           onTap: function(e) {
             //alert(e);
           if (e) {
-            
+
               Auth.$onAuthStateChanged(function(firebaseUser) {
                 var idEv= "";
+                var upd = {};
               if($localStorage.evento!=""){
-                var updates = {};
+                //licuadora
+                console.log($localStorage.evento);
+                Data.child("eventos-users").orderByChild('idEvento').equalTo($localStorage.evento.id).once('value', function (snapshot) {
+                  snapshot.forEach(function(snapshot) {// todos los registros del usuario en eventos
+                    var idUser = snapshot.child("idUser").val();
+                    var idEvUs = snapshot.key;
+                    console.log(idUser);
+                    console.log(firebaseUser.uid);
+                    if (idUser==firebaseUser.uid) {
+                      console.log("entra update eventos-users");
+                      upd['/eventos-users/' + idEvUs+ '/estado'] = 2;
+                      Data.update(upd);
+                    }
+                  });
+                });
+                /*var updates = {};
                 updates['/users/' + firebaseUser.uid+ '/accesoEvento'] = 0;
-                Data.update(updates);
-                idEv=$localStorage.evento.$id;
+                Data.update(updates);*/
+                idEv=$localStorage.evento.id;
               }else{
                 idEv="";
               }
@@ -780,7 +865,7 @@ angular.module('app.controllers', [])
                     $ionicHistory.nextViewOptions({
                       disableBack: true
                     });
-                   
+
                     $timeout.cancel(time);
                     $localStorage.score=0;
                     $localStorage.op=5;
@@ -792,7 +877,7 @@ angular.module('app.controllers', [])
                   }
                 });
             });
-            
+
           }
         }
         }
@@ -807,7 +892,7 @@ angular.module('app.controllers', [])
       subTitle: '',
       scope: $scope,
       buttons: [
-        
+
         {
           text: '<b>Aceptar</b>',
           type: 'button-calm',
@@ -817,7 +902,7 @@ angular.module('app.controllers', [])
 
             //var new_value =  parseInt(localStorage.getItem('num')) + 1
             $localStorage.score=$localStorage.score+1;
-            
+
 
             //setTimeout(function () {
               //$scope.$apply(function () {
@@ -840,7 +925,7 @@ angular.module('app.controllers', [])
       subTitle: '',
       scope: $scope,
       buttons: [
-        
+
         {
           text: '<b>Aceptar</b>',
           type: 'button-calm',
@@ -853,7 +938,7 @@ angular.module('app.controllers', [])
             } else {
               $state.go("menu.jugar");
             }
-            
+
           }
         }
         }
@@ -879,7 +964,7 @@ angular.module('app.controllers', [])
           if(e) {
             Auth.$onAuthStateChanged(function(firebaseUser) {
               //alert(firebaseUser.uid);
-              
+
               var displayName = firebaseUser.displayname;
               var email = firebaseUser.email;
               if($localStorage.evento!=""){
@@ -889,11 +974,11 @@ angular.module('app.controllers', [])
               }
               var idEv= "";
               if($localStorage.evento!=""){
-                idEv = $localStorage.evento.$id;
+                idEv = $localStorage.evento.id;
               }else{
                 idEv = "";
               }
-              
+
               Data.child("Score").push().set({
                     name: displayName,
                     email: email,
@@ -915,10 +1000,10 @@ angular.module('app.controllers', [])
                     $state.go("menu.inicio");
                   }
                 });
-              
-              
+
+
             });
-            
+
           }else{
             //hacer que continue el counter en donde se quedo
           }
@@ -926,8 +1011,8 @@ angular.module('app.controllers', [])
         }
       ]
     });
-    
-  
+
+
     /*firebase.auth().signOut().then(function() {
       $state.go('menu.login');
       // Sign-out successful.
@@ -935,7 +1020,7 @@ angular.module('app.controllers', [])
       // An error happened.
     }); */
   }
-    
+
 
 $scope.btn1 = function() {
   //alert();
@@ -946,30 +1031,30 @@ $scope.btn1 = function() {
     //$scope.data.score = $scope.data.score + 1;
   }else{
     $scope.showPopupIncorrecto();
-    
+
   }
-  
+
 }
 $scope.btn2 = function() {
   $timeout.cancel(time);
   if ($scope.data.res2==$scope.data.correcta) {
     $scope.showPopupCorrecto();
-    
+
     //$scope.data.score = $scope.data.score + 1;
   }else{
     $scope.showPopupIncorrecto();
-    
+
   }
 }
 $scope.btn3 = function() {
   $timeout.cancel(time);
   if ($scope.data.res3==$scope.data.correcta) {
     $scope.showPopupCorrecto();
-    
+
     //$scope.data.score = $scope.data.score + 1;
   }else{
     $scope.showPopupIncorrecto();
-    
+
   }
 }
 
@@ -981,7 +1066,7 @@ $scope.btn3 = function() {
   $scope.scores = {};
   var refScore = Data.child("Score");
 
-  $scope.data.idEvento=$localStorage.evento.$id;
+  $scope.data.idEvento=$localStorage.evento.id;
   $scope.data.nombreEvento=$localStorage.evento.nombre;
   //alert($localStorage.evento.nombre);
 
@@ -1001,9 +1086,9 @@ $scope.btn3 = function() {
 
   if ($localStorage.evento!="") {
     var arr = [];
-    var query = Data.child("Score").orderByChild('evento').equalTo($localStorage.evento.$id);
+    var query = Data.child("Score").orderByChild('evento').equalTo($localStorage.evento.id);
     query.on('value', function (snapshot){
-      
+
       snapshot.forEach(function(child) {
         arr.push(child.val());
       });
@@ -1027,7 +1112,7 @@ $scope.btn3 = function() {
         $scope.hide();
       });
     }, 500);
-    
+
 
   }else{
     //hacer query para todos los scores que no tienen "evento"
@@ -1036,7 +1121,7 @@ $scope.btn3 = function() {
   var arr = [];
     var query = Data.child("Score").orderByChild('evento').equalTo("");
     query.on('value', function (snapshot){
-      
+
       snapshot.forEach(function(child) {
         arr.push(child.val());
       });
@@ -1060,13 +1145,13 @@ $scope.btn3 = function() {
         $scope.hide();
       });
     }, 500);
-    
+
   }
-  
-  
+
+
   //alert($firebaseArray(refScore).$keyAt(0));
   /*Data.child("users").child($scope.scores.user).once('value', function (snapshot) {
-    var childKey = snapshot.child("displayName").val(); 
+    var childKey = snapshot.child("displayName").val();
     var childKey2 = snapshot.child("email").val();
     $scope.scores.userName = childKey;
   }); */
