@@ -221,16 +221,26 @@ angular.module('app.controllers', [])
   }
   })
 
-.controller("eventosCtrl", function($scope, Auth, Data, $firebaseArray, $localStorage, $location, $ionicLoading) {
-  $scope.eventos = {};
+.controller("eventosCtrl", function($scope, Auth, Data, $firebaseArray, $localStorage, $location, $ionicLoading, $cordovaBarcodeScanner) {
+   $scope.eventos = {};
   $scope.data = {};
   var refEv = Data.child("eventos");
   var refSc = Data.child("Score");
   $localStorage.evento="";
-
+  
   $scope.qr = function(){
+	var idQREvento = "-Kj5pENaEKwLp0DcXSa2";  //-KaG0ysHI3TlR5TD1orw, -Kj0ZSveZJSJlVg6Z2rJ, -Kj4TMecXX-Dss7QoY1v ,-Kj5pENaEKwLp0DcXSa2
     //aparece lector qr que contiene id del nuevo evento. Ejemplo evento con id: -Kj0ZSveZJSJlVg6Z2rJ
-    var idQREvento = "-Kj5pENaEKwLp0DcXSa2"; //-KaG0ysHI3TlR5TD1orw, -Kj0ZSveZJSJlVg6Z2rJ, -Kj4TMecXX-Dss7QoY1v ,-Kj5pENaEKwLp0DcXSa2
+    $cordovaBarcodeScanner.scan().then(function(imageData) {
+			idQREvento = imageData.text;
+            //alert(imageData.text);
+            //console.log("Barcode Format -> " + imageData.format);
+            //console.log("Cancelled -> " + imageData.cancelled);
+        }, function(error) {
+            //console.log("Error -> " + error);
+			alert("Vuelve a intentarlo");
+	});
+	
     Auth.$onAuthStateChanged(function(firebaseUser) {
       var i = 0;
       Data.child("eventos-users").orderByChild('idUser').equalTo(firebaseUser.uid).once('value', function (snapshot) {
