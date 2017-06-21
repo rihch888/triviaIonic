@@ -254,7 +254,6 @@ angular.module('app.controllers', [])
           }
         });
       });
-      //incrementamos en 'eventos' inscritos + 1
       var upd = {};
       Data.child("eventos").child(idQREvento).once('value', function (snapshot) {
         console.log(snapshot.child('inscritos').val());
@@ -560,11 +559,37 @@ angular.module('app.controllers', [])
   $localStorage.score=0;
   $localStorage.op=5;
   $localStorage.evento="";
+$localStorage.porcentajeAciertos = [
+  {
+  "categoria" : "Literatura",
+  "aciertos" : 0,
+  "preguntas" : 0
+  },
+  {
+    "categoria" : "Pintura",
+    "aciertos" : 0,
+    "preguntas" : 0
+  },
+  {
+    "categoria" : "Musica",
+    "aciertos" : 0,
+    "preguntas" : 0
+  },
+  {
+    "categoria" : "Cine",
+    "aciertos" : 0,
+    "preguntas" : 0
+  },
+  {
+    "categoria" : "Arquitectura",
+    "aciertos" : 0,
+    "preguntas" : 0
+  }
+];
 })
 
 .controller("jugarCtrl", function($scope, Auth, Data, $localStorage, $state ,$ionicSwipeCardDelegate) {
   $scope.data = {};
-
   var cardTypes = [{
     title: 'Literatura',
     image: 'img/img1.jpg'
@@ -600,6 +625,7 @@ angular.module('app.controllers', [])
 
     Data.child("preguntas").orderByChild('categoria').equalTo(newCard.title).once('value', function (snapshot) {
       //alert("entra 2");
+
       var i = 0;
       var rand = Math.floor(Math.random() * snapshot.numChildren());
       snapshot.forEach(function(snapshot) {
@@ -849,15 +875,50 @@ angular.module('app.controllers', [])
               }else{
                 idEv="";
               }
-
+                var porcentajeLiteratura = 0;
+                var porcentajePintura = 0;
+                var porcentajeMusica = 0;
+                var porcentajeCine = 0;
+                var porcentajeArquitectura = 0;
+                $localStorage.porcentajeAciertos.forEach(function(data){
+                  if(data.preguntas>0) {
+                    if(data.categoria=="Literatura") {
+                      porcentajeLiteratura=data.aciertos/data.preguntas;
+                      console.log(porcentajeLiteratura);
+                    }
+                    if(data.categoria=="Pintura") {
+                      porcentajePintura=data.aciertos/data.preguntas;
+                      console.log(porcentajePintura);
+                    }
+                    if (data.categoria=="Musica") {
+                      porcentajeMusica=data.aciertos/data.preguntas;
+                      console.log(porcentajeMusica);
+                    }
+                    if (data.categoria=="Cine") {
+                      porcentajeCine=data.aciertos/data.preguntas;
+                      console.log(porcentajeCine);
+                    }
+                    if (data.categoria=="Arquitectura") {
+                      porcentajeArquitectura=data.aciertos/data.preguntas;
+                      console.log(porcentajeArquitectura);
+                    }
+                  }
+                  console.log("categoría: "+data.categoria+" preguntas: "+data.preguntas+" aciertos: "+data.aciertos);
+                });
+                //console.log("Mayor categoría: "+mayorCategoria+" Mayor aciertos: "+mayorScore);
                 //alert(firebaseUser.uid);
                 var displayName = firebaseUser.displayname;
                 var email = firebaseUser.email;
-                Data.child("Score").push().set({
+                var d = new Date()
+                var d = ("0" + d.getDate()).slice(-2) + "/" +  ("0" + (d.getMonth() + 1)).slice(-2) + "/" + d.getFullYear();
+                var newPostKey = firebase.database().ref().child('Score').push().key;
+                //Data.child("Score").push().set({
+                Data.child("Score/"+newPostKey).set({
                     name: displayName,
                     email: email,
                     score: $localStorage.score,
-                    evento: idEv
+                    evento: idEv,
+                    fecha: d
                 }, function(error) {
                   if(error) {
                     alert(error);
@@ -865,7 +926,78 @@ angular.module('app.controllers', [])
                     $ionicHistory.nextViewOptions({
                       disableBack: true
                     });
+                    //guardar porcentajeAciertos en firebase con key del último score
+                    Data.child("porcentajeAciertos").push().set({
+                      idScore: newPostKey,
+                      literatura: porcentajeLiteratura,
+                      pintura: porcentajePintura,
+                      musica: porcentajeMusica,
+                      cine: porcentajeCine,
+                      arquitectura: porcentajeArquitectura
+                    }, function(error) {
+                      if(error) {
+                        alert(error);
+                      }else{
+                        console.log("guardado correctamente");
+                      }
+                    });
+                    porcentajeLiteratura = 0;
+                    porcentajePintura = 0;
+                    porcentajeMusica = 0;
+                    porcentajeCine = 0;
+                    porcentajeArquitectura = 0;
+                    $localStorage.categoriaMasAcertada = [
+                      {
+                      "categoria" : "Literatura",
+                      "aciertos" : 0
+                      },
+                      {
+                        "categoria" : "Pintura",
+                        "aciertos" : 0
+                      },
+                      {
+                        "categoria" : "Musica",
+                        "aciertos" : 0
+                      },
+                      {
+                        "categoria" : "Cine",
+                        "aciertos" : 0
+                      },
+                      {
+                        "categoria" : "Arquitectura",
+                        "aciertos" : 0
+                      }
+                  ];
+                  $localStorage.porcentajeAciertos = [
+                    {
+                    "categoria" : "Literatura",
+                    "aciertos" : 0,
+                    "preguntas" : 0
+                    },
+                    {
+                      "categoria" : "Pintura",
+                      "aciertos" : 0,
+                      "preguntas" : 0
+                    },
+                    {
+                      "categoria" : "Musica",
+                      "aciertos" : 0,
+                      "preguntas" : 0
+                    },
+                    {
+                      "categoria" : "Cine",
+                      "aciertos" : 0,
+                      "preguntas" : 0
+                    },
+                    {
+                      "categoria" : "Arquitectura",
+                      "aciertos" : 0,
+                      "preguntas" : 0
+                    }
+                  ];
 
+                    mayorScore = 0;
+                    mayorCategoria = "";
                     $timeout.cancel(time);
                     $localStorage.score=0;
                     $localStorage.op=5;
@@ -899,7 +1031,17 @@ angular.module('app.controllers', [])
           onTap: function(e) {
             //alert(e);
           if(e) {
+            $localStorage.porcentajeAciertos.forEach(function(data){
+              if (data.categoria==$localStorage.categoria){
+                data.aciertos++;
+                data.preguntas++;
+              }
+            });
 
+            /*$localStorage.categoriaMasAcertada.push({
+              "categoria" : $localStorage.categoria,
+              "aciertos" : categoriaMasAcertada
+            });*/
             //var new_value =  parseInt(localStorage.getItem('num')) + 1
             $localStorage.score=$localStorage.score+1;
 
@@ -932,6 +1074,12 @@ angular.module('app.controllers', [])
           onTap: function(e) {
             //alert(e);
           if (e) {
+            $localStorage.porcentajeAciertos.forEach(function(data){
+              if (data.categoria==$localStorage.categoria){
+                data.preguntas++;
+              }
+            });
+
             $localStorage.op=$localStorage.op-1;
             if ($localStorage.op==0) {
               $scope.showPopupLose();
@@ -979,25 +1127,136 @@ angular.module('app.controllers', [])
                 idEv = "";
               }
 
-              Data.child("Score").push().set({
-                    name: displayName,
-                    email: email,
-                    score: $localStorage.score,
-                    evento: idEv
-                }, function(error) {
-                  if(error) {
-                    alert(error);
-                  }else{
-                    $ionicHistory.nextViewOptions({
-                      disableBack: true
-                    });
-                    $localStorage.score=0;
-                    $localStorage.op=5;
-                    $localStorage.evento="";
-                    $scope.data.score=0;
-                    $scope.data.op=5;
-                    idEv="";
-                    $state.go("menu.inicio");
+              //pille
+              var porcentajeLiteratura = 0;
+              var porcentajePintura = 0;
+              var porcentajeMusica = 0;
+              var porcentajeCine = 0;
+              var porcentajeArquitectura = 0;
+              $localStorage.porcentajeAciertos.forEach(function(data){
+                if(data.preguntas>0) {
+                  if(data.categoria=="Literatura") {
+                    porcentajeLiteratura=data.aciertos/data.preguntas;
+                    console.log(porcentajeLiteratura);
+                  }
+                  if(data.categoria=="Pintura") {
+                    porcentajePintura=data.aciertos/data.preguntas;
+                    console.log(porcentajePintura);
+                  }
+                  if (data.categoria=="Musica") {
+                    porcentajeMusica=data.aciertos/data.preguntas;
+                    console.log(porcentajeMusica);
+                  }
+                  if (data.categoria=="Cine") {
+                    porcentajeCine=data.aciertos/data.preguntas;
+                    console.log(porcentajeCine);
+                  }
+                  if (data.categoria=="Arquitectura") {
+                    porcentajeArquitectura=data.aciertos/data.preguntas;
+                    console.log(porcentajeArquitectura);
+                  }
+                }
+                console.log("categoría: "+data.categoria+" preguntas: "+data.preguntas+" aciertos: "+data.aciertos);
+              });
+
+              var d = new Date()
+              var d = ("0" + d.getDate()).slice(-2) + "/" +  ("0" + (d.getMonth() + 1)).slice(-2) + "/" + d.getFullYear();
+
+              var newPostKey = firebase.database().ref().child('Score').push().key;
+              //Data.child("Score").push().set({
+              Data.child("Score/"+newPostKey).set({
+                  name: displayName,
+                  email: email,
+                  score: $localStorage.score,
+                  evento: idEv,
+                  fecha: d
+              }, function(error) {
+                if(error) {
+                  alert(error);
+                }else{
+                  $ionicHistory.nextViewOptions({
+                    disableBack: true
+                  });
+                  //guardar porcentajeAciertos en firebase con key del último score
+                  Data.child("porcentajeAciertos").push().set({
+                    idScore: newPostKey,
+                    literatura: porcentajeLiteratura,
+                    pintura: porcentajePintura,
+                    musica: porcentajeMusica,
+                    cine: porcentajeCine,
+                    arquitectura: porcentajeArquitectura
+                  }, function(error) {
+                    if(error) {
+                      alert(error);
+                    }else{
+                      console.log("guardado correctamente");
+                    }
+                  });
+                  porcentajeLiteratura = 0;
+                  porcentajePintura = 0;
+                  porcentajeMusica = 0;
+                  porcentajeCine = 0;
+                  porcentajeArquitectura = 0;
+                  $localStorage.categoriaMasAcertada = [
+                    {
+                    "categoria" : "Literatura",
+                    "aciertos" : 0
+                    },
+                    {
+                      "categoria" : "Pintura",
+                      "aciertos" : 0
+                    },
+                    {
+                      "categoria" : "Musica",
+                      "aciertos" : 0
+                    },
+                    {
+                      "categoria" : "Cine",
+                      "aciertos" : 0
+                    },
+                    {
+                      "categoria" : "Arquitectura",
+                      "aciertos" : 0
+                    }
+                ];
+                $localStorage.porcentajeAciertos = [
+                  {
+                  "categoria" : "Literatura",
+                  "aciertos" : 0,
+                  "preguntas" : 0
+                  },
+                  {
+                    "categoria" : "Pintura",
+                    "aciertos" : 0,
+                    "preguntas" : 0
+                  },
+                  {
+                    "categoria" : "Musica",
+                    "aciertos" : 0,
+                    "preguntas" : 0
+                  },
+                  {
+                    "categoria" : "Cine",
+                    "aciertos" : 0,
+                    "preguntas" : 0
+                  },
+                  {
+                    "categoria" : "Arquitectura",
+                    "aciertos" : 0,
+                    "preguntas" : 0
+                  }
+                ];
+
+                  mayorScore = 0;
+                  mayorCategoria = "";
+                  $timeout.cancel(time);
+                  $localStorage.score=0;
+                  $localStorage.op=5;
+                  $localStorage.evento="";
+                  idEv="";
+                  $scope.data.score=0;
+                  $scope.data.op=5;
+                  $state.go("menu.inicio");
                   }
                 });
 
