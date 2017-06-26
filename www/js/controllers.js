@@ -227,7 +227,7 @@ angular.module('app.controllers', [])
   var refEv = Data.child("eventos");
   var refSc = Data.child("Score");
   $localStorage.evento="";
-  
+
   $scope.qr = function(){
 	var idQREvento = "-Kj5pENaEKwLp0DcXSa2";  //-KaG0ysHI3TlR5TD1orw, -Kj0ZSveZJSJlVg6Z2rJ, -Kj4TMecXX-Dss7QoY1v ,-Kj5pENaEKwLp0DcXSa2
     //aparece lector qr que contiene id del nuevo evento. Ejemplo evento con id: -Kj0ZSveZJSJlVg6Z2rJ
@@ -240,7 +240,7 @@ angular.module('app.controllers', [])
             //console.log("Error -> " + error);
 			alert("Vuelve a intentarlo");
 	});
-	
+
     Auth.$onAuthStateChanged(function(firebaseUser) {
       var i = 0;
       Data.child("eventos-users").orderByChild('idUser').equalTo(firebaseUser.uid).once('value', function (snapshot) {
@@ -581,17 +581,22 @@ $localStorage.porcentajeAciertos = [
     "preguntas" : 0
   },
   {
-    "categoria" : "Musica",
+    "categoria" : "Entretenimiento",
     "aciertos" : 0,
     "preguntas" : 0
   },
   {
-    "categoria" : "Cine",
+    "categoria" : "Ciencia",
     "aciertos" : 0,
     "preguntas" : 0
   },
   {
     "categoria" : "Arquitectura",
+    "aciertos" : 0,
+    "preguntas" : 0
+  },
+  {
+    "categoria" : "Filosofía Institucional",
     "aciertos" : 0,
     "preguntas" : 0
   }
@@ -607,13 +612,16 @@ $localStorage.porcentajeAciertos = [
     title: 'Pintura',
     image: 'img/pic.png'
   }, {
-    title: 'Musica',
+    title: 'Entretenimiento',
     image: 'img/pic2.png'
   }, {
-    title: 'Cine',
+    title: 'Ciencia',
     image: 'img/river.jpg'
   }, {
     title: 'Arquitectura',
+    image: 'img/pic4.png'
+  },{
+    title: 'Filosofía Institucional',
     image: 'img/pic4.png'
   }];
 
@@ -887,9 +895,10 @@ $localStorage.porcentajeAciertos = [
               }
                 var porcentajeLiteratura = 0;
                 var porcentajePintura = 0;
-                var porcentajeMusica = 0;
-                var porcentajeCine = 0;
+                var porcentajeEntretenimiento = 0;
+                var porcentajeCiencia = 0;
                 var porcentajeArquitectura = 0;
+                var porcentajeFilInst = 0;
                 $localStorage.porcentajeAciertos.forEach(function(data){
                   if(data.preguntas>0) {
                     if(data.categoria=="Literatura") {
@@ -900,17 +909,21 @@ $localStorage.porcentajeAciertos = [
                       porcentajePintura=data.aciertos/data.preguntas;
                       console.log(porcentajePintura);
                     }
-                    if (data.categoria=="Musica") {
-                      porcentajeMusica=data.aciertos/data.preguntas;
-                      console.log(porcentajeMusica);
+                    if (data.categoria=="Entretenimiento") {
+                      porcentajeEntretenimiento=data.aciertos/data.preguntas;
+                      console.log(porcentajeEntretenimiento);
                     }
-                    if (data.categoria=="Cine") {
-                      porcentajeCine=data.aciertos/data.preguntas;
-                      console.log(porcentajeCine);
+                    if (data.categoria=="Ciencia") {
+                      porcentajeCiencia=data.aciertos/data.preguntas;
+                      console.log(porcentajeCiencia);
                     }
                     if (data.categoria=="Arquitectura") {
                       porcentajeArquitectura=data.aciertos/data.preguntas;
                       console.log(porcentajeArquitectura);
+                    }
+                    if (data.categoria=="Filosofía Institucional") {
+                      porcentajeFilInst=data.aciertos/data.preguntas;
+                      console.log(porcentajeFilInst);
                     }
                   }
                   console.log("categoría: "+data.categoria+" preguntas: "+data.preguntas+" aciertos: "+data.aciertos);
@@ -941,9 +954,10 @@ $localStorage.porcentajeAciertos = [
                       idScore: newPostKey,
                       literatura: porcentajeLiteratura,
                       pintura: porcentajePintura,
-                      musica: porcentajeMusica,
-                      cine: porcentajeCine,
-                      arquitectura: porcentajeArquitectura
+                      entretenimiento: porcentajeEntretenimiento,
+                      ciencia: porcentajeCiencia,
+                      arquitectura: porcentajeArquitectura,
+                      filosofiaInstitucional:porcentajeFilInst
                     }, function(error) {
                       if(error) {
                         alert(error);
@@ -951,33 +965,12 @@ $localStorage.porcentajeAciertos = [
                         console.log("guardado correctamente");
                       }
                     });
-                    porcentajeLiteratura = 0;
+                    porcentajeLiteratura = 0;//papilla
                     porcentajePintura = 0;
-                    porcentajeMusica = 0;
-                    porcentajeCine = 0;
+                    porcentajeEntretenimiento = 0;
+                    porcentajeCiencia = 0;
                     porcentajeArquitectura = 0;
-                    $localStorage.categoriaMasAcertada = [
-                      {
-                      "categoria" : "Literatura",
-                      "aciertos" : 0
-                      },
-                      {
-                        "categoria" : "Pintura",
-                        "aciertos" : 0
-                      },
-                      {
-                        "categoria" : "Musica",
-                        "aciertos" : 0
-                      },
-                      {
-                        "categoria" : "Cine",
-                        "aciertos" : 0
-                      },
-                      {
-                        "categoria" : "Arquitectura",
-                        "aciertos" : 0
-                      }
-                  ];
+                    porcentajeFilInst = 0;
                   $localStorage.porcentajeAciertos = [
                     {
                     "categoria" : "Literatura",
@@ -990,12 +983,12 @@ $localStorage.porcentajeAciertos = [
                       "preguntas" : 0
                     },
                     {
-                      "categoria" : "Musica",
+                      "categoria" : "Entretenimiento",
                       "aciertos" : 0,
                       "preguntas" : 0
                     },
                     {
-                      "categoria" : "Cine",
+                      "categoria" : "Ciencia",
                       "aciertos" : 0,
                       "preguntas" : 0
                     },
@@ -1003,9 +996,12 @@ $localStorage.porcentajeAciertos = [
                       "categoria" : "Arquitectura",
                       "aciertos" : 0,
                       "preguntas" : 0
+                    },{
+                      "categoria" : "Filosofía Institucional",
+                      "aciertos" : 0,
+                      "preguntas" : 0
                     }
                   ];
-
                     mayorScore = 0;
                     mayorCategoria = "";
                     $timeout.cancel(time);
@@ -1140,9 +1136,10 @@ $localStorage.porcentajeAciertos = [
               //pille
               var porcentajeLiteratura = 0;
               var porcentajePintura = 0;
-              var porcentajeMusica = 0;
+              var porcentajeEntretenimiento = 0;
               var porcentajeCine = 0;
               var porcentajeArquitectura = 0;
+              var porcentajeFilInst = 0;
               $localStorage.porcentajeAciertos.forEach(function(data){
                 if(data.preguntas>0) {
                   if(data.categoria=="Literatura") {
@@ -1153,17 +1150,21 @@ $localStorage.porcentajeAciertos = [
                     porcentajePintura=data.aciertos/data.preguntas;
                     console.log(porcentajePintura);
                   }
-                  if (data.categoria=="Musica") {
-                    porcentajeMusica=data.aciertos/data.preguntas;
-                    console.log(porcentajeMusica);
+                  if (data.categoria=="Entretenimiento") {
+                    porcentajeEntretenimiento=data.aciertos/data.preguntas;
+                    console.log(porcentajeEntretenimiento);
                   }
-                  if (data.categoria=="Cine") {
-                    porcentajeCine=data.aciertos/data.preguntas;
-                    console.log(porcentajeCine);
+                  if (data.categoria=="Ciencia") {
+                    porcentajeCiencia=data.aciertos/data.preguntas;
+                    console.log(porcentajeCiencia);
                   }
                   if (data.categoria=="Arquitectura") {
                     porcentajeArquitectura=data.aciertos/data.preguntas;
                     console.log(porcentajeArquitectura);
+                  }
+                  if (data.categoria=="Filosofía Institucional") {
+                    porcentajeFilInst=data.aciertos/data.preguntas;
+                    console.log(porcentajeFilInst);
                   }
                 }
                 console.log("categoría: "+data.categoria+" preguntas: "+data.preguntas+" aciertos: "+data.aciertos);
@@ -1192,9 +1193,10 @@ $localStorage.porcentajeAciertos = [
                     idScore: newPostKey,
                     literatura: porcentajeLiteratura,
                     pintura: porcentajePintura,
-                    musica: porcentajeMusica,
-                    cine: porcentajeCine,
-                    arquitectura: porcentajeArquitectura
+                    entretenimiento: porcentajeEntretenimiento,
+                    ciencia: porcentajeCiencia,
+                    arquitectura: porcentajeArquitectura,
+                    filosofiaInstitucional: porcentajeFilInst
                   }, function(error) {
                     if(error) {
                       alert(error);
@@ -1204,31 +1206,10 @@ $localStorage.porcentajeAciertos = [
                   });
                   porcentajeLiteratura = 0;
                   porcentajePintura = 0;
-                  porcentajeMusica = 0;
-                  porcentajeCine = 0;
+                  porcentajeEntretenimiento = 0;
+                  porcentajeCiencia = 0;
                   porcentajeArquitectura = 0;
-                  $localStorage.categoriaMasAcertada = [
-                    {
-                    "categoria" : "Literatura",
-                    "aciertos" : 0
-                    },
-                    {
-                      "categoria" : "Pintura",
-                      "aciertos" : 0
-                    },
-                    {
-                      "categoria" : "Musica",
-                      "aciertos" : 0
-                    },
-                    {
-                      "categoria" : "Cine",
-                      "aciertos" : 0
-                    },
-                    {
-                      "categoria" : "Arquitectura",
-                      "aciertos" : 0
-                    }
-                ];
+                  porcentajeFilInst = 0;
                 $localStorage.porcentajeAciertos = [
                   {
                   "categoria" : "Literatura",
@@ -1241,17 +1222,22 @@ $localStorage.porcentajeAciertos = [
                     "preguntas" : 0
                   },
                   {
-                    "categoria" : "Musica",
+                    "categoria" : "Entretenimiento",
                     "aciertos" : 0,
                     "preguntas" : 0
                   },
                   {
-                    "categoria" : "Cine",
+                    "categoria" : "Ciencia",
                     "aciertos" : 0,
                     "preguntas" : 0
                   },
                   {
                     "categoria" : "Arquitectura",
+                    "aciertos" : 0,
+                    "preguntas" : 0
+                  },
+                  {
+                    "categoria" : "Filosofía Institucional",
                     "aciertos" : 0,
                     "preguntas" : 0
                   }
