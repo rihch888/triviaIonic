@@ -31,6 +31,30 @@
                         {
                             "xml": "<feature name=\"Camera\"><param name=\"android-package\" value=\"org.apache.cordova.camera.CameraLauncher\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"FacebookConnectPlugin\"><param name=\"android-package\" value=\"org.apache.cordova.facebook.ConnectPlugin\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<access origin=\"https://m.facebook.com\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<access origin=\"https://graph.facebook.com\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<access origin=\"https://api.facebook.com\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<access origin=\"https://*.fbcdn.net\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<access origin=\"https://*.akamaihd.net\" />",
+                            "count": 1
                         }
                     ]
                 }
@@ -41,6 +65,30 @@
                         {
                             "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
                             "count": 3
+                        }
+                    ],
+                    "application": [
+                        {
+                            "xml": "<meta-data android:name=\"com.facebook.sdk.ApplicationId\" android:value=\"@string/fb_app_id\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<activity android:label=\"@string/fb_app_name\" android:name=\"com.facebook.LoginActivity\" android:theme=\"@android:style/Theme.Translucent.NoTitleBar\" />",
+                            "count": 1
+                        }
+                    ]
+                }
+            },
+            "res/values/facebookconnect.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<string name=\"fb_app_id\">477643535693446</string>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<string name=\"fb_app_name\">Preguntas_U</string>",
+                            "count": 1
                         }
                     ]
                 }
@@ -64,6 +112,11 @@
             "PACKAGE_NAME": "com.ionicframework.starter"
         },
         "cordova-plugin-camera": {
+            "PACKAGE_NAME": "com.ionicframework.starter"
+        },
+        "phonegap-facebook-plugin": {
+            "APP_ID": "477643535693446",
+            "APP_NAME": "Preguntas_U",
             "PACKAGE_NAME": "com.ionicframework.starter"
         }
     },
@@ -269,6 +322,13 @@
             "clobbers": [
                 "CameraPopoverHandle"
             ]
+        },
+        {
+            "file": "plugins/phonegap-facebook-plugin/facebookConnectPlugin.js",
+            "id": "phonegap-facebook-plugin.FacebookConnectPlugin",
+            "clobbers": [
+                "facebookConnectPlugin"
+            ]
         }
     ],
     "plugin_metadata": {
@@ -277,6 +337,7 @@
         "cordova-plugin-compat": "1.1.0",
         "cordova-plugin-file": "4.3.0",
         "cordova-plugin-file-transfer": "1.6.0",
-        "cordova-plugin-camera": "2.3.0"
+        "cordova-plugin-camera": "2.3.0",
+        "phonegap-facebook-plugin": "0.12.0"
     }
 }

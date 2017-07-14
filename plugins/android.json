@@ -21,6 +21,11 @@
         },
         "cordova-plugin-file": {
             "PACKAGE_NAME": "com.ionicframework.starter"
+        },
+        "phonegap-facebook-plugin": {
+            "APP_ID": "477643535693446",
+            "APP_NAME": "Preguntas_U",
+            "PACKAGE_NAME": "com.ionicframework.starter"
         }
     },
     "dependent_plugins": {

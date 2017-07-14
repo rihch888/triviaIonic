@@ -1,4 +1,4 @@
-<ion-view title="Chat" id="chat" ng-controller="chatCtrl" >
+<ion-view title="" id="chat" >
   <ion-content padding="false" scroll="false" >
   <style>
   .top-container{
@@ -21,6 +21,7 @@
 
       <ion-list >
         <ion-item class="item-avatar" id="page-list-item1" ng-repeat="message in messages" >
+        <img src="img/user2.png">
           <h2>{{message.name}}</h2>
           <p>{{message.text}}</p>
         </ion-item>
