@@ -80,7 +80,181 @@ angular.module('app.controllers', [])
 
 
 
-.controller("loginCtrl", function($scope, $state, Auth, $ionicLoading, $ionicPopup) {
+.controller("loginCtrl", function($scope, $state, Auth, $ionicLoading, $ionicPopup, UserService, Auth, Data) {
+  
+  //facebook>>
+  //This is the success callback from the login method
+  var fbLoginSuccess = function(response) {
+    if (!response.authResponse){
+      fbLoginError("Cannot find the authResponse");
+      return;
+    }
+
+    var authResponse = response.authResponse;
+	alert(authResponse);
+	alert(response.credential);
+
+    getFacebookProfileInfo(authResponse)
+    .then(function(profileInfo) {
+
+      Data.child("users").orderByChild("email").equalTo(profileInfo.email).on("value", function(snapshot) {
+        if (snapshot.exists()) {
+          console.log("encontrado");
+          alert("existe");
+          $state.go('menu.inicio');
+
+        } else {
+          console.log("vacio");
+          alert("vacio");
+          Data.child("users").push().set({
+            email: profileInfo.email,
+            displayName: profileInfo.name,
+            accesoEvento: 0
+          }, function(error) {
+                        if(error) {
+                          alert(error);
+                        }else {
+                          $scope.hide();
+                        $state.go('menu.inicio');
+                        }
+                      });
+        }
+      });
+
+
+
+		//$state.go('menu.inicio');
+		//
+          //alert("Usuario creado uid: "+ firebaseUser.uid);
+
+		//
+
+      //for the purpose of this example I will store user data on local storage
+      UserService.setUser({
+        authResponse: authResponse,
+				userID: profileInfo.id,
+				name: profileInfo.name,
+				email: profileInfo.email,
+        picture : "http://graph.facebook.com/" + authResponse.userID + "/picture?type=large"
+      });
+
+      $ionicLoading.hide();
+
+
+    }, function(fail){
+      //fail get profile info
+	 // alert("11");
+      console.log('profile info fail', fail);
+    });
+  };
+
+
+  //This is the fail callback from the login method
+  var fbLoginError = function(error){
+    console.log('fbLoginError', error);
+    $ionicLoading.hide();
+  };
+
+  //this method is to get the user profile info from the facebook api
+  var getFacebookProfileInfo = function (authResponse) {
+    var info = $q.defer();
+
+    facebookConnectPlugin.api('/me?fields=email,name&access_token=' + authResponse.accessToken, null,
+      function (response) {
+				console.log(response);
+        info.resolve(response);
+      },
+      function (response) {
+				console.log(response);
+        info.reject(response);
+      }
+    );
+    return info.promise;
+  };
+
+  //This method is executed when the user press the "Login with facebook" button
+  $scope.facebookSignIn = function() {
+	//alert("8");
+	//Autentificacion con facebook
+    facebookConnectPlugin.getLoginStatus(function(success){
+     if(success.status === 'connected'){
+		 //alert(":)");
+		 alert(success.authResponse.accessToken);
+		 var credential = firebase.auth.FacebookAuthProvider.credential(
+                    success.authResponse.accessToken);
+ 
+                firebase.auth().signInWithCredential(credential).catch(function (error) {
+					alert("Auth");
+                    // Handle Errors here.
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    // The email of the user's account used.
+                    var email = error.email;
+                    // The firebase.auth.AuthCredential type that was used.
+                    var credential = error.credential;
+                    // ...
+                });
+		 
+		// alert(":P");
+		// alert("7");
+        // the user is logged in and has authenticated your app, and response.authResponse supplies
+        // the user's ID, a valid access token, a signed request, and the time the access token
+        // and signed request each expire
+        console.log('getLoginStatus', success.status);
+
+				//check if we have our user saved
+				var user = UserService.getUser('facebook');
+
+				if(!user.userID)
+				{
+					alert(user.userID);
+					//$state.go("menu.inicio")
+					//alert("6");
+					getFacebookProfileInfo(success.authResponse)
+					.then(function(profileInfo) {
+					
+					var credential = firebase.auth.FacebookAuthProvider.credential(
+                    response.authResponse.accessToken);
+ 
+                firebase.auth().signInWithCredential(credential).catch(function (error) {
+					alert("Auth");
+                    // Handle Errors here.
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    // The email of the user's account used.
+                    var email = error.email;
+                    // The firebase.auth.AuthCredential type that was used.
+                    var credential = error.credential;
+                    // ...
+                });
+
+					}, function(fail){
+						alert("3");
+						//fail get profile info
+						console.log('profile info fail', fail);
+					});
+				}else{
+					//alert("1");
+          $state.go('menu.inicio');
+
+				}
+
+     } else {
+        //if (success.status === 'not_authorized') the user is logged in to Facebook, but has not authenticated your app
+        //else The person is not logged into Facebook, so we're not sure if they are logged into this app or not.
+        console.log('getLoginStatus', success.status);
+				//alert("2");
+			  $ionicLoading.show({
+          template: 'Logging in...'
+        });
+
+        //ask the permissions you need. You can learn more about FB permissions here: https://developers.facebook.com/docs/facebook-login/permissions/v2.4
+        facebookConnectPlugin.login(['email', 'public_profile'], fbLoginSuccess, fbLoginError);
+      }
+    });
+  };
+	//FAcebook^
+  
   $scope.data = {};
   $scope.show = function() {
     $ionicLoading.show({
