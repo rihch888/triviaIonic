@@ -5,15 +5,16 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <title></title>
 
-    
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
     <script src="lib/ionic/js/ionic.bundle.js"></script>
 
     <!-- cordova script (this will be a 404 during development) -->
     
-    
+    <script src="js/ng-cordova.min.js"></script>
     <script src="cordova.js"></script>
 
-    <script src="js/ng-cordova.min.js"></script>
+    
 
     <!--<script src="js/FileTransfer.js"></script> -->
     <!-- Firebase & AngularFire -->
@@ -35,21 +36,20 @@
     <!-- AngularFire -->
     <!--<script src="lib/angularfire/dist/angularfire.min.js"></script> -->
     <script src="https://cdn.firebase.com/libs/angularfire/2.1.0/angularfire.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.6/ngStorage.min.js"></script>
     <script src="https://cdn.rawgit.com/Luegg/angularjs-scroll-glue/master/src/scrollglue.js"></script>
     <!-- <script src="js/ng-scroll-glue.js"></script>  -->
-    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <!-- compiled css output -->
     <link href="css/ionic.app.css" rel="stylesheet">
-    -->
+
     <script src="js/app.js"></script>
     <script src="js/controllers.js"></script>
     <script src="js/routes.js"></script>
     <script src="js/services.js"></script>
     <script src="js/directives.js"></script>  
-    
+    <script src="js/ionic.swipecards.js"></script>
 
     
-    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
     
 
     <style type="text/css">
@@ -80,7 +80,7 @@
     -->
 
   </head>
-  <body ng-app="app">
+  <body ng-app="app" class="platform-android platform-cordova platform-webview">
 
         <!--<ion-header-bar  align-title="center" class="top bar-positive">
       <h1 class="title">Chat</h1> 
