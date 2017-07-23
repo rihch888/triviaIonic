@@ -80,12 +80,11 @@ angular.module('app.controllers', [])
 
 
 
-.controller("loginCtrl", function($scope, $state, Auth, $ionicLoading, $ionicPopup, UserService, Auth, Data) {
+.controller("loginCtrl", function($scope, $state, $ionicLoading, $ionicPopup, UserService, Auth, Data, $q) {
   
   //facebook>>
   //This is the success callback from the login method
- // This is the success callback from the login method
-  var fbLoginSuccess = function(response) {
+   var fbLoginSuccess = function(response) {
     if (!response.authResponse){
       fbLoginError("Cannot find the authResponse");
       return;
@@ -104,7 +103,8 @@ angular.module('app.controllers', [])
         picture : "http://graph.facebook.com/" + authResponse.userID + "/picture?type=large"
       });
       $ionicLoading.hide();
-      $state.go('app.home');
+      //$scope.hide();
+      $state.go('menu.inicio');
     }, function(fail){
       // Fail get profile info
       console.log('profile info fail', fail);
@@ -138,12 +138,9 @@ angular.module('app.controllers', [])
   $scope.facebookSignIn = function() {
     facebookConnectPlugin.getLoginStatus(function(success){
       if(success.status === 'connected'){
-        // The user is logged in and has authenticated your app, and response.authResponse supplies
-        // the user's ID, a valid access token, a signed request, and the time the access token
-        // and signed request each expire
-		
-		//>>Auth firebase
-		var credential = firebase.auth.FacebookAuthProvider.credential(
+		  
+		 //alert(success.authResponse.accessToken);
+		 var credential = firebase.auth.FacebookAuthProvider.credential(
                     success.authResponse.accessToken);
  
                 firebase.auth().signInWithCredential(credential).catch(function (error) {
@@ -157,8 +154,10 @@ angular.module('app.controllers', [])
                     var credential = error.credential;
                     // ...
                 });
-		//<<Auth
-				
+		  
+        // The user is logged in and has authenticated your app, and response.authResponse supplies
+        // the user's ID, a valid access token, a signed request, and the time the access token
+        // and signed request each expire
         console.log('getLoginStatus', success.status);
 
     		// Check if we have our user saved
@@ -176,13 +175,30 @@ angular.module('app.controllers', [])
 							picture : "http://graph.facebook.com/" + success.authResponse.userID + "/picture?type=large"
 						});
 
-						$state.go('app.home');
+						//$scope.hide();
+						$state.go('menu.inicio');
 					}, function(fail){
 						// Fail get profile info
 						console.log('profile info fail', fail);
 					});
 				}else{
-					$state.go('app.home');
+					//$scope.hide();
+					 $scope.show();
+      Auth.$signInWithEmailAndPassword(firebase.auth.FacebookAuthProvider.credential(
+                    success.authResponse.accessToken)).then(function(firebaseUser){
+        alert(firebaseUser.email);
+        $scope.hide();
+        $state.go('menu.inicio');
+
+      }).catch(function(error) {
+        // Handle Errors here.
+        $scope.hide();
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        $scope.showPopup();
+
+       
+      });
 				}
       } else {
         // If (success.status === 'not_authorized') the user is logged in to Facebook,
@@ -202,7 +218,7 @@ angular.module('app.controllers', [])
       }
     });
   };
-	//FAcebook^
+  //<<facebook
   
   $scope.data = {};
   $scope.show = function() {
