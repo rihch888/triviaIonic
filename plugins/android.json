@@ -26,6 +26,9 @@
             "APP_ID": "477643535693446",
             "APP_NAME": "Preguntas_U",
             "PACKAGE_NAME": "com.ionicframework.starter"
+        },
+        "phonegap-plugin-barcodescanner": {
+            "PACKAGE_NAME": "com.gmail.boargs.triviaUVAQ"
         }
     },
     "dependent_plugins": {

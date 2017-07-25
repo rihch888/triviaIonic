@@ -183,22 +183,11 @@ angular.module('app.controllers', [])
 					});
 				}else{
 					//$scope.hide();
-					 $scope.show();
-      Auth.$signInWithEmailAndPassword(firebase.auth.FacebookAuthProvider.credential(
-                    success.authResponse.accessToken)).then(function(firebaseUser){
-        alert(firebaseUser.email);
-        $scope.hide();
-        $state.go('menu.inicio');
+						$scope.show();
+      
+						$scope.hide();
+						$state.go('menu.inicio');
 
-      }).catch(function(error) {
-        // Handle Errors here.
-        $scope.hide();
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        $scope.showPopup();
-
-       
-      });
 				}
       } else {
         // If (success.status === 'not_authorized') the user is logged in to Facebook,
