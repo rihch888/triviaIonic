@@ -1110,7 +1110,7 @@ $localStorage.porcentajeAciertos = [
                     porcentajeCiencia = 0;
                     porcentajeArquitectura = 0;
                     porcentajeFilInst = 0;
-                  $localStorage.porcentajeAciertos = [
+                  /*$localStorage.porcentajeAciertos = [
                     {
                     "categoria" : "Literatura",
                     "aciertos" : 0,
@@ -1140,7 +1140,7 @@ $localStorage.porcentajeAciertos = [
                       "aciertos" : 0,
                       "preguntas" : 0
                     }
-                  ];
+                  ];*/
                     mayorScore = 0;
                     mayorCategoria = "";
                     $timeout.cancel(time);
@@ -1349,7 +1349,7 @@ $localStorage.porcentajeAciertos = [
                   porcentajeCiencia = 0;
                   porcentajeArquitectura = 0;
                   porcentajeFilInst = 0;
-                $localStorage.porcentajeAciertos = [
+                /*$localStorage.porcentajeAciertos = [
                   {
                   "categoria" : "Literatura",
                   "aciertos" : 0,
@@ -1380,7 +1380,7 @@ $localStorage.porcentajeAciertos = [
                     "aciertos" : 0,
                     "preguntas" : 0
                   }
-                ];
+                ];*/
 
                   mayorScore = 0;
                   mayorCategoria = "";
