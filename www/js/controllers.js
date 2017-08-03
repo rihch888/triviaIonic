@@ -325,7 +325,7 @@ angular.module('app.controllers', [])
   }
 
 
-  $scope.showPopup2 = function() {
+  $scope.resetPass = function() {
   var myPopup2 = $ionicPopup.show({
       template: '<input style="" type="email" placeholder="Correo Electrónico" ng-model="data.resetCorreo">',
       title: 'Restablecer contraseña',
@@ -339,30 +339,36 @@ angular.module('app.controllers', [])
         onTap: function(e) {
           if (!$scope.data.resetCorreo) {
             //don't allow the user to close unless he enters wifi password
+            alert("Ingresa correo electrónico!");
             e.preventDefault();
             console.log("No correo!");
           } else {
             return $scope.data.resetCorreo;
           }
         }
+      },
+      {
+        text: '<b>Cancelar</b>',
+        type: 'button button-light',
+      onTap: function(e) {
+
       }
+    }
       ]
     });
     myPopup2.then(function(res) {
-      console.log('Tapped!', res);
-      var email=res;
-      console.log("reset pass: "+email);
-      Auth.$sendPasswordResetEmail(email);
-      //Auth.$sendPasswordResetEmail("rihch888@gmail.com");
+      if (res) {
+        console.log('Tapped!', res);
+        console.log("reset pass: "+res);
+        Auth.$sendPasswordResetEmail(res);
+        //Auth.$sendPasswordResetEmail("rihch888@gmail.com");
+      }
       if(myPopup!=null){
         myPopup.close();
       }
     });
   }
 
-  $scope.resetPass = function(){
-      $scope.showPopup2();
-  }
 })
 
 
