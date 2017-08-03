@@ -242,7 +242,7 @@ angular.module('app.controllers', [])
     ]
   });
   myPopup.then(function(res) {
-    console.log('Tapped!', res);
+    //console.log('Tapped!', res);
   });
 }
   //var auth = $firebaseAuth();
@@ -324,57 +324,44 @@ angular.module('app.controllers', [])
     $state.go('registro');
   }
 
+
   $scope.showPopup2 = function() {
   var myPopup2 = $ionicPopup.show({
-      template: '',
-      title: 'Ingresa tu correo electrónico!',
-      subTitle: 'Para restablecer la contraseña necesitas ingresar tu correo electrónico.',
+      template: '<input style="" type="email" placeholder="Correo Electrónico" ng-model="data.resetCorreo">',
+      title: 'Restablecer contraseña',
+      subTitle: 'Ingresa tu correo electronico.',
       scope: $scope,
       buttons: [
 
         {
           text: '<b>Aceptar</b>',
           type: 'button-calm',
-
+        onTap: function(e) {
+          if (!$scope.data.resetCorreo) {
+            //don't allow the user to close unless he enters wifi password
+            e.preventDefault();
+            console.log("No correo!");
+          } else {
+            return $scope.data.resetCorreo;
+          }
         }
+      }
       ]
     });
     myPopup2.then(function(res) {
       console.log('Tapped!', res);
-    });
-  }
-  $scope.showPopup3 = function() {
-  var myPopup3 = $ionicPopup.show({
-      template: '',
-      title: 'Revisa tu correo electrónico!',
-      subTitle: 'Se ha enviado un enlace para recuperar tu contraseña a tu correo electrónico.',
-      scope: $scope,
-      buttons: [
-
-        {
-          text: '<b>Aceptar</b>',
-          type: 'button-calm',
-
-        }
-      ]
-    });
-    myPopup3.then(function(res) {
-      console.log('Tapped!', res);
-       myPopup.close();
+      var email=res;
+      console.log("reset pass: "+email);
+      Auth.$sendPasswordResetEmail(email);
+      //Auth.$sendPasswordResetEmail("rihch888@gmail.com");
+      if(myPopup!=null){
+        myPopup.close();
+      }
     });
   }
 
   $scope.resetPass = function(){
-    var email=$scope.data.username;
-    console.log("reset pass: "+email);
-    if (email==null) {
-      //console.log("no hay correo electrónico");
       $scope.showPopup2();
-    }else{
-      Auth.$sendPasswordResetEmail(email);
-      $scope.showPopup3();
-    }
-
   }
 })
 
