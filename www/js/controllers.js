@@ -402,7 +402,7 @@ angular.module('app.controllers', [])
   var refEv = Data.child("eventos");
   var refSc = Data.child("Score");
   $localStorage.evento="";
-
+	
   $scope.qr = function(){
 	var idQREvento = "-Kj5pENaEKwLp0DcXSa2";  //-KaG0ysHI3TlR5TD1orw, -Kj0ZSveZJSJlVg6Z2rJ, -Kj4TMecXX-Dss7QoY1v ,-Kj5pENaEKwLp0DcXSa2
     //aparece lector qr que contiene id del nuevo evento. Ejemplo evento con id: -Kj0ZSveZJSJlVg6Z2rJ
@@ -453,10 +453,12 @@ angular.module('app.controllers', [])
       }).then(function(){
           //console.log("The loading indicator is now displayed");
       });
+	  
     };
     $scope.hide = function(){
         $ionicLoading.hide().then(function(){
             //console.log("The loading indicator is now hidden");
+			
         });
     };
     $scope.show();
@@ -469,6 +471,7 @@ angular.module('app.controllers', [])
             accesoUsuario=1;
           }else{
             accesoUsuario=0;
+			$scope.hide();
           }
           // IMPORTANTE: Cuando se acabe el evento, cambiar "jugar" a ""
         });
