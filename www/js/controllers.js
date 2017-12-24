@@ -402,7 +402,7 @@ angular.module('app.controllers', [])
   var refEv = Data.child("eventos");
   var refSc = Data.child("Score");
   $localStorage.evento="";
-
+	
   $scope.qr = function(){
 	var idQREvento = "-Kj5pENaEKwLp0DcXSa2";  //-KaG0ysHI3TlR5TD1orw, -Kj0ZSveZJSJlVg6Z2rJ, -Kj4TMecXX-Dss7QoY1v ,-Kj5pENaEKwLp0DcXSa2
     //aparece lector qr que contiene id del nuevo evento. Ejemplo evento con id: -Kj0ZSveZJSJlVg6Z2rJ
@@ -453,12 +453,12 @@ angular.module('app.controllers', [])
       }).then(function(){
           //console.log("The loading indicator is now displayed");
       });
-
+	  
     };
     $scope.hide = function(){
         $ionicLoading.hide().then(function(){
             //console.log("The loading indicator is now hidden");
-
+			
         });
     };
     $scope.show();
@@ -774,7 +774,7 @@ $localStorage.porcentajeAciertos = [
     "preguntas" : 0
   },
   {
-    "categoria" : "Musica",
+    "categoria" : "Filosofía Institucional",
     "aciertos" : 0,
     "preguntas" : 0
   }
@@ -799,7 +799,7 @@ $localStorage.porcentajeAciertos = [
     title: 'Arquitectura',
     image: 'img/pic4.png'
   },{
-    title: 'Musica',
+    title: 'Filosofía Institucional',
     image: 'img/pic4.png'
   }];
 
@@ -1099,7 +1099,7 @@ $localStorage.porcentajeAciertos = [
                       porcentajeArquitectura=data.aciertos/data.preguntas;
                       console.log(porcentajeArquitectura);
                     }
-                    if (data.categoria=="Musica") {
+                    if (data.categoria=="Filosofía Institucional") {
                       porcentajeFilInst=data.aciertos/data.preguntas;
                       console.log(porcentajeFilInst);
                     }
@@ -1340,7 +1340,7 @@ $localStorage.porcentajeAciertos = [
                     porcentajeArquitectura=data.aciertos/data.preguntas;
                     console.log(porcentajeArquitectura);
                   }
-                  if (data.categoria=="Musica") {
+                  if (data.categoria=="Filosofía Institucional") {
                     porcentajeFilInst=data.aciertos/data.preguntas;
                     console.log(porcentajeFilInst);
                   }
